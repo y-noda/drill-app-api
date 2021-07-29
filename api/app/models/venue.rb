@@ -5,6 +5,7 @@ class Venue
   field :coordinates, type: Array
 
   attr_accessor :latitude, :longitude
+
   index({ coordinates: '2dsphere' })
 
   after_validation :set_coordinates
