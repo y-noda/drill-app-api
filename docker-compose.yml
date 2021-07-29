@@ -9,7 +9,7 @@ services:
       context: ./api/
       dockerfile: Dockerfile
     ports:
-      - "3006:3000"
+      - "3000:3000"
     volumes:
       - ./api/:/api
     depends_on:
@@ -48,7 +48,7 @@ services:
     depends_on:
       - api
     ports:
-      - "8080:80"
+      - "80:80"
     volumes:
       - ./api/:/api
 
