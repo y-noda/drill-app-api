@@ -1,10 +1,9 @@
 class Api::V1::AnswersController < ApplicationController
   skip_before_action :verify_authenticity_token
   def create
-    
     hash = JSON.parse(params[:answer])
-    key = hash["session"]["userid"]
-
+    key = hash["answer"]["session"]["userid"]
+    
     @answer = Answer.find_or_initialize_by(key: key)
 
     if @answer.new_record?
