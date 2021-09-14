@@ -17,6 +17,10 @@ class Api::V1::AnswersController < ApplicationController
             total: 0, 
             monthlyArr: [] 
           },
+          answeredQuestionNum: {
+            total: 0, 
+            monthlyArr: [] 
+          },
           set_month: sent_month
         } 
       }
@@ -25,7 +29,10 @@ class Api::V1::AnswersController < ApplicationController
       #時間
       input_data[:total_data][:studyingTime][:total] = parameters[:elapsedTime]
       input_data[:total_data][:studyingTime][:monthlyArr].push(parameters[:elapsedTime])
-      
+      #回答数
+      input_data[:total_data][:answeredQuestionNum][:total] = parameters[:answeredQuestionNum]
+      input_data[:total_data][:answeredQuestionNum][:monthlyArr].push(parameters[:answeredQuestionNum])
+
 
       if @answer = Answer.create(key: key, save_data: input_data)
         render status: 200, json: { id: key }
@@ -46,26 +53,41 @@ class Api::V1::AnswersController < ApplicationController
       end
 
       #時間
-      input_data[:total_data][:studyingTime][:total] = input_data[:total_data][:studyingTime][:total] + parameters[:elapsedTime]
-      
+      input_data[:total_data][:studyingTime][:total] += parameters[:elapsedTime]
+      #回答数
+      input_data[:total_data][:answeredQuestionNum][:total] += parameters[:answeredQuestionNum]
+
       set_month = input_data[:total_data][:set_month]
       
       if sent_month == set_month
-        input_data[:total_data][:studyingTime][:monthlyArr][-1] = input_data[:total_data][:studyingTime][:monthlyArr][-1] + parameters[:elapsedTime]
+         #時間
+        input_data[:total_data][:studyingTime][:monthlyArr][-1] += parameters[:elapsedTime]
+        #回答数
+        input_data[:total_data][:answeredQuestionNum][:monthlyArr][-1] += parameters[:answeredQuestionNum]
       else
         gap_months = sent_month - set_month - 1
         #久しぶりの送信なら0時間をpushして埋める
         gap_months.times do |i|
+          #時間
           input_data[:total_data][:studyingTime][:monthlyArr].push(0)
+          #回答数
+          input_data[:total_data][:answeredQuestionNum][:monthlyArr].push(0)
         end
+        #時間
         input_data[:total_data][:studyingTime][:monthlyArr].push(parameters[:elapsedTime])
+        #回答数
+        input_data[:total_data][:answeredQuestionNum][:monthlyArr].push(parameters[:answeredQuestionNum])
+
         #最終更新月の更新
         input_data[:total_data][:set_month] = sent_month
         #12ヶ月分に調整
         array_length = input_data[:total_data][:studyingTime][:monthlyArr].length
         if  array_length > 12
           difference = array_length - 12
+          #時間
           input_data[:total_data][:studyingTime][:monthlyArr].shift(difference)
+          #回答数
+          input_data[:total_data][:answeredQuestionNum][:monthlyArr].shift(difference)
         end
 
       end
@@ -81,9 +103,9 @@ class Api::V1::AnswersController < ApplicationController
   def show 
     @answer = Answer.find_by(key: params[:id])
     if @answer 
-      render status: 200, json: { answer: @answer.answer }
+      render status: 200, json: { save_data: @answer.save_data }
     else
-      render status: 400, json: { answer: '失敗' }
+      render status: 400, json: { save_data: '失敗' }
     end
   end
 end
