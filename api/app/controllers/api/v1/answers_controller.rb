@@ -5,8 +5,7 @@ class Api::V1::AnswersController < ApplicationController
     parameters = params[:session].to_unsafe_h  #後で strongparameterかましてto_hにする
     key = parameters[:userid]
     book_id = parameters[:workbookid].to_s.to_sym
-    sent_month = parameters[:dateStart].to_date.month
-
+    
     @answer = Answer.find_or_initialize_by(key: key)
 
     if @answer.new_record? 
@@ -25,8 +24,8 @@ class Api::V1::AnswersController < ApplicationController
         }
       }
 
-      save_answer = SaveAnswer.new(set_data)
-      save_answer.fill(parameters, sent_month, book_id)
+      save_answer = SaveAnswer.new(set_data, parameters, book_id)
+      save_answer.fill
 
       if @answer = Answer.create(key: key, save_data: save_answer.set_data)
         render status: 200, json: { id: key }
@@ -38,8 +37,8 @@ class Api::V1::AnswersController < ApplicationController
       set_data = Marshal.load(Marshal.dump(@answer[:save_data]))
       if @answer[:save_data][book_id]  
       #book_idのレコードがある時は追加
-        save_answer = SaveAnswer.new(set_data)
-        save_answer.add(parameters, sent_month, book_id)
+        save_answer = SaveAnswer.new(set_data, parameters, book_id)
+        save_answer.add
       else
       #book_idのレコードがない時は新規作成
         set_data[book_id] = {
@@ -53,8 +52,8 @@ class Api::V1::AnswersController < ApplicationController
             monthlyArr: []
           }
         }
-        save_answer = SaveAnswer.new(set_data)
-        save_answer.fill(parameters, sent_month, book_id)
+        save_answer = SaveAnswer.new(set_data, parameters, book_id)
+        save_answer.fill
       end
         
       if @answer.update(key: key, save_data: save_answer.set_data)
