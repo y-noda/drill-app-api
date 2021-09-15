@@ -1,98 +1,78 @@
 class Api::V1::AnswersController < ApplicationController
+  require './app/classes/save_answer'
   skip_before_action :verify_authenticity_token
   def create
     parameters = params[:session].to_unsafe_h  #後で strongparameterかましてto_hにする
     key = parameters[:userid]
     book_id = parameters[:workbookid].to_s.to_sym
-
+    
     @answer = Answer.find_or_initialize_by(key: key)
-    sent_month = parameters[:dateStart].to_date.month
 
     if @answer.new_record? 
-      #ユーザのレコードがない時
-      input_data = { 
-        data_per_book: {}, 
-        total_data: {
+    #ユーザのレコードがない時
+      set_data = {
+        "#{book_id}": {
+          answers: [],
           studyingTime: {
-            total: 0, 
-            monthlyArr: [] 
+            total: '',
+            monthlyArr: []
           },
           answeredQuestionNum: {
-            total: 0, 
-            monthlyArr: [] 
+            total: '',
+            monthlyArr: []
           },
-          set_month: sent_month
-        } 
+          loginCountNum: {
+            total: 315,
+            monthlyArr: [5, 15, 20, 10, 8, 6, 21, 45, 9, 61, 77, 45]
+          },
+          correctAnswerNum: {
+            total: '',
+            monthlyArr: []
+          }
+        }
       }
-      #回答
-      input_data[:data_per_book][book_id] = [parameters]
-      #時間
-      input_data[:total_data][:studyingTime][:total] = parameters[:elapsedTime]
-      input_data[:total_data][:studyingTime][:monthlyArr].push(parameters[:elapsedTime])
-      #回答数
-      input_data[:total_data][:answeredQuestionNum][:total] = parameters[:answeredQuestionNum]
-      input_data[:total_data][:answeredQuestionNum][:monthlyArr].push(parameters[:answeredQuestionNum])
 
+      save_answer = SaveAnswer.new(set_data, parameters, book_id)
+      save_answer.fill
 
-      if @answer = Answer.create(key: key, save_data: input_data)
+      if @answer = Answer.create(key: key, save_data: save_answer.set_data)
         render status: 200, json: { id: key }
       else
         render status: 400, json: { id: '失敗' }
       end
     else
-      #回答
-      if @answer[:save_data][:data_per_book][book_id]  
-        #book_idのレコードがある時は追加
-        input_data = Marshal.load(Marshal.dump(@answer[:save_data]))
-        input_data[:data_per_book][book_id].push(parameters)
-        
+    #ユーザのレコードがある時
+      set_data = Marshal.load(Marshal.dump(@answer[:save_data]))
+      if @answer[:save_data][book_id]  
+      #book_idのレコードがある時は追加
+        save_answer = SaveAnswer.new(set_data, parameters, book_id)
+        save_answer.add
       else
-        #book_idのレコードがない時は新規作成
-        input_data = Marshal.load(Marshal.dump(@answer[:save_data]))
-        input_data[:data_per_book][book_id] = [parameters]
-      end
-
-      #時間
-      input_data[:total_data][:studyingTime][:total] += parameters[:elapsedTime]
-      #回答数
-      input_data[:total_data][:answeredQuestionNum][:total] += parameters[:answeredQuestionNum]
-
-      set_month = input_data[:total_data][:set_month]
-      
-      if sent_month == set_month
-         #時間
-        input_data[:total_data][:studyingTime][:monthlyArr][-1] += parameters[:elapsedTime]
-        #回答数
-        input_data[:total_data][:answeredQuestionNum][:monthlyArr][-1] += parameters[:answeredQuestionNum]
-      else
-        gap_months = sent_month - set_month - 1
-        #久しぶりの送信なら0時間をpushして埋める
-        gap_months.times do |i|
-          #時間
-          input_data[:total_data][:studyingTime][:monthlyArr].push(0)
-          #回答数
-          input_data[:total_data][:answeredQuestionNum][:monthlyArr].push(0)
-        end
-        #時間
-        input_data[:total_data][:studyingTime][:monthlyArr].push(parameters[:elapsedTime])
-        #回答数
-        input_data[:total_data][:answeredQuestionNum][:monthlyArr].push(parameters[:answeredQuestionNum])
-
-        #最終更新月の更新
-        input_data[:total_data][:set_month] = sent_month
-        #12ヶ月分に調整
-        array_length = input_data[:total_data][:studyingTime][:monthlyArr].length
-        if  array_length > 12
-          difference = array_length - 12
-          #時間
-          input_data[:total_data][:studyingTime][:monthlyArr].shift(difference)
-          #回答数
-          input_data[:total_data][:answeredQuestionNum][:monthlyArr].shift(difference)
-        end
-
+      #book_idのレコードがない時は新規作成
+        set_data[book_id] = {
+          answers: [],
+          studyingTime: {
+            total: '',
+            monthlyArr: []
+          },
+          answeredQuestionNum: {
+            total: '',
+            monthlyArr: []
+          },
+          loginCountNum: {
+            total: 315,
+            monthlyArr: [5, 15, 20, 10, 8, 6, 21, 45, 9, 61, 77, 45]
+          },
+          correctAnswerNum: {
+            total: '',
+            monthlyArr: []
+          }
+        }
+        save_answer = SaveAnswer.new(set_data, parameters, book_id)
+        save_answer.fill
       end
         
-      if @answer.update(key: key, save_data: input_data)
+      if @answer.update(key: key, save_data: save_answer.set_data)
         render status: 200, json: { id: key }
       else
         render status: 400, json: { id: '失敗' }
@@ -102,8 +82,39 @@ class Api::V1::AnswersController < ApplicationController
 
   def show 
     @answer = Answer.find_by(key: params[:id])
+
+    save_data = @answer[:save_data]
+    return_data = []
+    keys = @answer[:save_data].keys
+
+    keys.each do |key|
+      book_id = key.to_s.to_sym
+      answers = save_data[book_id][:answers]
+      grade = 1 
+      school = "dummy_gakkou"
+      subject = answers[0][:subject]
+      studyingTime = save_data[book_id][:studyingTime]
+      answeredQuestionNum = save_data[book_id][:answeredQuestionNum]
+      loginCountNum = save_data[book_id][:loginCountNum]
+      correctAnswerNum = save_data[book_id][:correctAnswerNum]
+      return_data.push(
+        { 
+          drillid: book_id, 
+          grade: grade, 
+          school: school, 
+          subject: subject, 
+          studyingTime: studyingTime, 
+          answeredQuestionNum: answeredQuestionNum,
+          loginCountNum: loginCountNum,
+          correctAnswerNum: correctAnswerNum,
+          achievementRate: 25
+        }
+      )
+    end
+
+
     if @answer 
-      render status: 200, json: { save_data: @answer.save_data }
+      render status: 200, json: return_data
     else
       render status: 400, json: { save_data: '失敗' }
     end
