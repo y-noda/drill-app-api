@@ -20,6 +20,14 @@ class Api::V1::AnswersController < ApplicationController
           answeredQuestionNum: {
             total: '',
             monthlyArr: []
+          },
+          loginCountNum: {
+            total: 315,
+            monthlyArr: [5, 15, 20, 10, 8, 6, 21, 45, 9, 61, 77, 45]
+          },
+          correctAnswerNum: {
+            total: '',
+            monthlyArr: []
           }
         }
       }
@@ -48,6 +56,14 @@ class Api::V1::AnswersController < ApplicationController
             monthlyArr: []
           },
           answeredQuestionNum: {
+            total: '',
+            monthlyArr: []
+          },
+          loginCountNum: {
+            total: 315,
+            monthlyArr: [5, 15, 20, 10, 8, 6, 21, 45, 9, 61, 77, 45]
+          },
+          correctAnswerNum: {
             total: '',
             monthlyArr: []
           }
@@ -79,6 +95,8 @@ class Api::V1::AnswersController < ApplicationController
       subject = answers[0][:subject]
       studyingTime = save_data[book_id][:studyingTime]
       answeredQuestionNum = save_data[book_id][:answeredQuestionNum]
+      loginCountNum = save_data[book_id][:loginCountNum]
+      correctAnswerNum = save_data[book_id][:correctAnswerNum]
       return_data.push(
         { 
           drillid: book_id, 
@@ -86,7 +104,10 @@ class Api::V1::AnswersController < ApplicationController
           school: school, 
           subject: subject, 
           studyingTime: studyingTime, 
-          answeredQuestionNum: answeredQuestionNum
+          answeredQuestionNum: answeredQuestionNum,
+          loginCountNum: loginCountNum,
+          correctAnswerNum: correctAnswerNum,
+          achievementRate: 25
         }
       )
     end

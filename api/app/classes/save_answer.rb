@@ -21,9 +21,12 @@ class SaveAnswer
     set_data[book_id][:studyingTime][:total] = parameters[:elapsedTime]
     set_data[book_id][:studyingTime][:monthlyArr].push(parameters[:elapsedTime])
     #回答数
-
     set_data[book_id][:answeredQuestionNum][:total] = parameters[:answeredQuestionNum]
     set_data[book_id][:answeredQuestionNum][:monthlyArr].push(parameters[:answeredQuestionNum])
+    #正答数
+    correct_answer_num = count_correct_answer
+    set_data[book_id][:correctAnswerNum][:total] = correct_answer_num
+    set_data[book_id][:correctAnswerNum][:monthlyArr].push(correct_answer_num)
 
     #最終更新月
     set_data[book_id][:set_year] = sent_year
@@ -37,24 +40,29 @@ class SaveAnswer
     set_data[book_id][:studyingTime][:total] += parameters[:elapsedTime]
     #回答数
     set_data[book_id][:answeredQuestionNum][:total] += parameters[:answeredQuestionNum]
-
+    #正答数
+    correct_answer_num = count_correct_answer
+    set_data[book_id][:correctAnswerNum][:total] += correct_answer_num
     
     #最終更新月
     set_year = set_data[book_id][:set_year] 
     set_month = set_data[book_id][:set_month] 
     
     #集計のadd
-    counting(set_year, set_month)
+    counting(set_year, set_month, correct_answer_num)
   end
 
   protected 
-    def counting(set_year, set_month)
+    def counting(set_year, set_month, correct_answer_num)
       
       if sent_year == set_year && sent_month == set_month 
         #時間
         set_data[book_id][:studyingTime][:monthlyArr][-1] += parameters[:elapsedTime]
         #回答数
         set_data[book_id][:answeredQuestionNum][:monthlyArr][-1] += parameters[:answeredQuestionNum]
+        #正答数
+        set_data[book_id][:correctAnswerNum][:monthlyArr][-1] += correct_answer_num
+
       else
         #久しぶりの送信なら0時間をpushして埋める
         fill_gap(set_year, set_month)
@@ -62,6 +70,9 @@ class SaveAnswer
         set_data[book_id][:studyingTime][:monthlyArr].push(parameters[:elapsedTime])
         #回答数
         set_data[book_id][:answeredQuestionNum][:monthlyArr].push(parameters[:answeredQuestionNum])
+        #正答数
+        set_data[book_id][:correctAnswerNum][:monthlyArr].push(correct_answer_num)
+
         #最終履歴時間の更新
         set_data[book_id][:set_year] = sent_year
         set_data[book_id][:set_month] = sent_month
@@ -86,6 +97,8 @@ class SaveAnswer
            set_data[book_id][:studyingTime][:monthlyArr] = []
            #回答数
            set_data[book_id][:answeredQuestionNum][:monthlyArr] = []
+           #正答数
+           set_data[book_id][:correctAnswerNum][:monthlyArr] = []
         end
 
       else
@@ -97,6 +110,8 @@ class SaveAnswer
           set_data[book_id][:studyingTime][:monthlyArr] = []
           #回答数
           set_data[book_id][:answeredQuestionNum][:monthlyArr] = []
+          #正答数
+          set_data[book_id][:correctAnswerNum][:monthlyArr] = []
         elsif sent_month < set_month 
         # 一年以内の場合
           gap_months = (sent_month - 1) +  (12 - set_month) 
@@ -112,6 +127,8 @@ class SaveAnswer
         set_data[book_id][:studyingTime][:monthlyArr].push(0)
         #回答数
         set_data[book_id][:answeredQuestionNum][:monthlyArr].push(0)
+        #正答数
+        set_data[book_id][:correctAnswerNum][:monthlyArr].push(0)
       end
     end
 
@@ -123,7 +140,21 @@ class SaveAnswer
         set_data[book_id][:studyingTime][:monthlyArr].shift(difference)
         #回答数
         set_data[book_id][:answeredQuestionNum][:monthlyArr].shift(difference)
+        #正答数
+        set_data[book_id][:correctAnswerNum][:monthlyArr].shift(difference)
       end
+    end
+
+    def count_correct_answer
+      count = 0
+      parameters[:question].each do |question|
+        question[:trial].each do |ans|
+          if ans[:correct]  
+            count = count + 1
+          end
+        end
+      end
+      return count
     end
 
 end
