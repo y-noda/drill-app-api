@@ -15,6 +15,13 @@ module Api
       g.orm :mongoid
     end
 
+    config.middleware.insert_before 0, Rack::Cors do
+      allow do
+        origins 'http://test.flak.jp', 'localhost:3000', '127.0.0.1:3000'
+        resource '*', headers: :any, methods: [:get, :post, :patch, :put]
+      end
+    end
+
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
