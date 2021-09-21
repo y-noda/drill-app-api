@@ -81,7 +81,8 @@ class Api::V1::AnswersController < ApplicationController
   end
 
   def show 
-    @answer = Answer.find(key: params[:id])
+    @answer = Answer.find_by(key: params[:id])
+
     if @answer 
       render status: 200, json: @answer 
     else

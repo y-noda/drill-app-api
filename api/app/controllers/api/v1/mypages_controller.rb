@@ -1,7 +1,7 @@
 class Api::V1::MypagesController < ApplicationController
   skip_before_action :verify_authenticity_token
   def log
-    @answer = Answer.find_by(key: params[:id])
+    @answer = Answer.find_by(key: params[:user_id])
 
     save_data = @answer[:save_data]
     return_data = []
