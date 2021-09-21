@@ -1,8 +1,7 @@
 Rails.application.routes.draw do
-  resources :venues
-  resources :plans
   namespace 'api' do
     namespace 'v1' do
+      resources :users
       resources :answers
       get 'log/:user_id', to: 'mypages#log'
     end
