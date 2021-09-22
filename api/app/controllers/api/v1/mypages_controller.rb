@@ -23,6 +23,11 @@ class Api::V1::MypagesController < ApplicationController
           grade: grade, 
           school: school, 
           subject: subject, 
+          crownNum: { 
+            gold: 10, 
+            silver: 12, 
+            bronze: 3 
+          },
           studyingTime: studyingTime, 
           answeredQuestionNum: answeredQuestionNum,
           loginCountNum: loginCountNum,

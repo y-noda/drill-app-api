@@ -44,7 +44,21 @@ class Api::V1::UsersController < ApplicationController
           },
           daily: {
             studyingTimeArr: []
-          }
+          },
+          units:[
+            {
+                id: "japanese_el_grd1_1",
+                title: "かんじの　よみ",
+                answeredQuestionNum: 932, 
+                correctAnswerNum: 80, 
+            },
+            {
+                id: "japanese_el_grd1_2",
+                title: "かんじの　かき",
+                answeredQuestionNum: 932,
+                correctAnswerNum: 80
+            }
+          ]
         }
       )
 
