@@ -23,6 +23,11 @@
 !/api/storage/.keep
 
 /api/public/assets
+/api/public/_nuxt
+/api/public/img
+/api/public/sound
+/api/public/index.html
+
 /api.byebug_history
 
 # Ignore master key for decrypting credentials and more.
