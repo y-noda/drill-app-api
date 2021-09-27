@@ -4,15 +4,18 @@ class Api::V1::AnswersController < ApplicationController
   def create
     parameters = params[:session].to_unsafe_h  #後で strongparameterかましてto_hにする
     key = parameters[:userid]
-    book_id = parameters[:workbookid].to_s.to_sym
-    
+    drill_id = parameters[:drillid].to_s.to_sym
+    unit_id = parameters[:unitid].to_s.to_sym
+
     @answer = Answer.find_or_initialize_by(key: key)
 
     if @answer.new_record? 
     #ユーザのレコードがない時
       set_data = {
-        "#{book_id}": {
-          answers: [],
+        "#{drill_id}": {
+          "#{unit_id}": {
+            answers: []
+          },
           studyingTime: {
             total: '',
             monthlyArr: []
@@ -32,7 +35,7 @@ class Api::V1::AnswersController < ApplicationController
         }
       }
 
-      save_answer = SaveAnswer.new(set_data, parameters, book_id)
+      save_answer = SaveAnswer.new(set_data, parameters, drill_id, unit_id)
       save_answer.fill
 
       if @answer = Answer.create(key: key, save_data: save_answer.set_data)

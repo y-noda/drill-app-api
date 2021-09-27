@@ -2,51 +2,53 @@ class SaveAnswer
   attr_accessor :set_data
   attr_accessor :parameters
   attr_accessor :book_id
+  attr_accessor :unit_id
   attr_accessor :sent_year
   attr_accessor :sent_month
 
-  def initialize(init_data, parameters, book_id)
+  def initialize(init_data, parameters, drill_id, unit_id)
     @set_data = init_data
     @parameters = parameters
     @sent_year = parameters[:dateStart].to_date.year
     @sent_month = parameters[:dateStart].to_date.month
-    @book_id = book_id
+    @drill_id = drill_id
+    @unit_id = unit_id
   end
 
   def fill
   #新規作成
     #回答
-    set_data[book_id][:answers].push(parameters)
+    set_data[drill_id][unit_id][:answers].push(parameters)
     #時間
-    set_data[book_id][:studyingTime][:total] = parameters[:elapsedTime]
-    set_data[book_id][:studyingTime][:monthlyArr].push(parameters[:elapsedTime])
+    set_data[drill_id][:studyingTime][:total] = parameters[:elapsedTime]
+    set_data[drill_id][:studyingTime][:monthlyArr].push(parameters[:elapsedTime])
     #回答数
-    set_data[book_id][:answeredQuestionNum][:total] = parameters[:answeredQuestionNum]
-    set_data[book_id][:answeredQuestionNum][:monthlyArr].push(parameters[:answeredQuestionNum])
+    set_data[drill_id][:answeredQuestionNum][:total] = parameters[:answeredQuestionNum]
+    set_data[drill_id][:answeredQuestionNum][:monthlyArr].push(parameters[:answeredQuestionNum])
     #正答数
     correct_answer_num = count_correct_answer
-    set_data[book_id][:correctAnswerNum][:total] = correct_answer_num
-    set_data[book_id][:correctAnswerNum][:monthlyArr].push(correct_answer_num)
+    set_data[drill_id][:correctAnswerNum][:total] = correct_answer_num
+    set_data[drill_id][:correctAnswerNum][:monthlyArr].push(correct_answer_num)
 
     #最終更新月
-    set_data[book_id][:set_year] = sent_year
-    set_data[book_id][:set_month] = sent_month
+    set_data[drill_id][:set_year] = sent_year
+    set_data[drill_id][:set_month] = sent_month
   end
 
   def add
     #回答
-    set_data[book_id][:answers].push(parameters)
+    set_data[drill_id][:answers].push(parameters)
     #時間
-    set_data[book_id][:studyingTime][:total] += parameters[:elapsedTime]
+    set_data[drill_id][:studyingTime][:total] += parameters[:elapsedTime]
     #回答数
-    set_data[book_id][:answeredQuestionNum][:total] += parameters[:answeredQuestionNum]
+    set_data[drill_id][:answeredQuestionNum][:total] += parameters[:answeredQuestionNum]
     #正答数
     correct_answer_num = count_correct_answer
-    set_data[book_id][:correctAnswerNum][:total] += correct_answer_num
+    set_data[drill_id][:correctAnswerNum][:total] += correct_answer_num
     
     #最終更新月
-    set_year = set_data[book_id][:set_year] 
-    set_month = set_data[book_id][:set_month] 
+    set_year = set_data[drill_id][:set_year] 
+    set_month = set_data[drill_id][:set_month] 
     
     #集計のadd
     counting(set_year, set_month, correct_answer_num)
@@ -57,25 +59,25 @@ class SaveAnswer
       
       if sent_year == set_year && sent_month == set_month 
         #時間
-        set_data[book_id][:studyingTime][:monthlyArr][-1] += parameters[:elapsedTime]
+        set_data[drill_id][:studyingTime][:monthlyArr][-1] += parameters[:elapsedTime]
         #回答数
-        set_data[book_id][:answeredQuestionNum][:monthlyArr][-1] += parameters[:answeredQuestionNum]
+        set_data[drill_id][:answeredQuestionNum][:monthlyArr][-1] += parameters[:answeredQuestionNum]
         #正答数
-        set_data[book_id][:correctAnswerNum][:monthlyArr][-1] += correct_answer_num
+        set_data[drill_id][:correctAnswerNum][:monthlyArr][-1] += correct_answer_num
 
       else
         #久しぶりの送信なら0時間をpushして埋める
         fill_gap(set_year, set_month)
         #時間
-        set_data[book_id][:studyingTime][:monthlyArr].push(parameters[:elapsedTime])
+        set_data[drill_id][:studyingTime][:monthlyArr].push(parameters[:elapsedTime])
         #回答数
-        set_data[book_id][:answeredQuestionNum][:monthlyArr].push(parameters[:answeredQuestionNum])
+        set_data[drill_id][:answeredQuestionNum][:monthlyArr].push(parameters[:answeredQuestionNum])
         #正答数
-        set_data[book_id][:correctAnswerNum][:monthlyArr].push(correct_answer_num)
+        set_data[drill_id][:correctAnswerNum][:monthlyArr].push(correct_answer_num)
 
         #最終履歴時間の更新
-        set_data[book_id][:set_year] = sent_year
-        set_data[book_id][:set_month] = sent_month
+        set_data[drill_id][:set_year] = sent_year
+        set_data[drill_id][:set_month] = sent_month
 
         #12ヶ月分に調整
         limit_months_array(12)
@@ -94,11 +96,11 @@ class SaveAnswer
         else 
         #異常な月順はリセット
            #時間
-           set_data[book_id][:studyingTime][:monthlyArr] = []
+           set_data[drill_id][:studyingTime][:monthlyArr] = []
            #回答数
-           set_data[book_id][:answeredQuestionNum][:monthlyArr] = []
+           set_data[drill_id][:answeredQuestionNum][:monthlyArr] = []
            #正答数
-           set_data[book_id][:correctAnswerNum][:monthlyArr] = []
+           set_data[drill_id][:correctAnswerNum][:monthlyArr] = []
         end
 
       else
@@ -107,11 +109,11 @@ class SaveAnswer
         if sent_year < set_year || sent_month >= set_month || year_gap > 1
         #異常な年順または一年以上たってる場合はリセット
           #時間
-          set_data[book_id][:studyingTime][:monthlyArr] = []
+          set_data[drill_id][:studyingTime][:monthlyArr] = []
           #回答数
-          set_data[book_id][:answeredQuestionNum][:monthlyArr] = []
+          set_data[drill_id][:answeredQuestionNum][:monthlyArr] = []
           #正答数
-          set_data[book_id][:correctAnswerNum][:monthlyArr] = []
+          set_data[drill_id][:correctAnswerNum][:monthlyArr] = []
         elsif sent_month < set_month 
         # 一年以内の場合
           gap_months = (sent_month - 1) +  (12 - set_month) 
@@ -124,11 +126,11 @@ class SaveAnswer
     def push_zero(gap_months)
       gap_months.times do |i|
         #時間
-        set_data[book_id][:studyingTime][:monthlyArr].push(0)
+        set_data[drill_id][:studyingTime][:monthlyArr].push(0)
         #回答数
-        set_data[book_id][:answeredQuestionNum][:monthlyArr].push(0)
+        set_data[drill_id][:answeredQuestionNum][:monthlyArr].push(0)
         #正答数
-        set_data[book_id][:correctAnswerNum][:monthlyArr].push(0)
+        set_data[drill_id][:correctAnswerNum][:monthlyArr].push(0)
       end
     end
 
@@ -137,11 +139,11 @@ class SaveAnswer
       if  array_length > num
         difference = array_length - num
         #時間
-        set_data[book_id][:studyingTime][:monthlyArr].shift(difference)
+        set_data[drill_id][:studyingTime][:monthlyArr].shift(difference)
         #回答数
-        set_data[book_id][:answeredQuestionNum][:monthlyArr].shift(difference)
+        set_data[drill_id][:answeredQuestionNum][:monthlyArr].shift(difference)
         #正答数
-        set_data[book_id][:correctAnswerNum][:monthlyArr].shift(difference)
+        set_data[drill_id][:correctAnswerNum][:monthlyArr].shift(difference)
       end
     end
 
