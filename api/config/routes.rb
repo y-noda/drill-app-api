@@ -4,6 +4,10 @@ Rails.application.routes.draw do
       resources :users
       resources :answers
       get 'log/:user_id', to: 'mypages#log'
+
+      post '/login', to: 'sessions#login'
+      delete '/logout', to: 'sessions#logout'
+
     end
   end
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
