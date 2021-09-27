@@ -11,8 +11,12 @@ class Api::V1::SessionsController < ApplicationController
     if @user && authenticate?(@user[:password], params[:password])
 
       login!(@user[:userid])
+
+      @user.delete(:crownNum)
+      @user.delete(:password)
+      @user.delete(:img)
       
-      render json: { logged_in: true, user: @user }
+      render json: @user
     else
       render json: { status: 401, errors: '認証に失敗しました。' }
     end
