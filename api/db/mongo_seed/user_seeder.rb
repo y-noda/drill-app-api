@@ -4,8 +4,8 @@ testpass = Digest::MD5.hexdigest("testpass")
 @answer = User.create(
                 key: 'users', 
                 save_data: {
-                  "db111": {
-                    userid: "db111",
+                  "dp111": {
+                    userid: "dp111",
                     name: "学習者101",
                     school: "小学校",
                     grade: "1",
@@ -21,8 +21,8 @@ testpass = Digest::MD5.hexdigest("testpass")
                       bronze: 0 
                     }
                   },
-                  "db112": {
-                    userid: "db112",
+                  "dp112": {
+                    userid: "dp112",
                     name: "学習者102",
                     school: "小学校",
                     grade: "1",
@@ -38,8 +38,8 @@ testpass = Digest::MD5.hexdigest("testpass")
                       bronze: 0 
                     }
                   },
-                  "db113": {
-                    userid: "db113",
+                  "dp113": {
+                    userid: "dp113",
                     name: "学習者103",
                     school: "小学校",
                     grade: "1",
@@ -55,8 +55,8 @@ testpass = Digest::MD5.hexdigest("testpass")
                       bronze: 0 
                     }
                   },
-                  "db114": {
-                    userid: "db114",
+                  "dp114": {
+                    userid: "dp114",
                     name: "学習者104",
                     school: "小学校",
                     grade: "1",
@@ -72,8 +72,8 @@ testpass = Digest::MD5.hexdigest("testpass")
                       bronze: 0 
                     }
                   },
-                  "db110t": {
-                    userid: "db110t",
+                  "dp110t": {
+                    userid: "dp110t",
                     name: "管理者100",
                     school: "小学校",
                     grade: "1",
@@ -89,8 +89,8 @@ testpass = Digest::MD5.hexdigest("testpass")
                       bronze: 0 
                     }
                   },
-                  "db211": {
-                    userid: "db211",
+                  "dp211": {
+                    userid: "dp211",
                     name: "学習者201",
                     school: "小学校",
                     grade: "2",
@@ -106,8 +106,8 @@ testpass = Digest::MD5.hexdigest("testpass")
                       bronze: 0 
                     }
                   },
-                  "db212": {
-                    userid: "db212",
+                  "dp212": {
+                    userid: "dp212",
                     name: "学習者202",
                     school: "小学校",
                     grade: "2",
@@ -123,8 +123,8 @@ testpass = Digest::MD5.hexdigest("testpass")
                       bronze: 0 
                     }
                   },
-                  "db213": {
-                    userid: "db213",
+                  "dp213": {
+                    userid: "dp213",
                     name: "学習者203",
                     school: "小学校",
                     grade: "2",
@@ -140,8 +140,8 @@ testpass = Digest::MD5.hexdigest("testpass")
                       bronze: 0 
                     }
                   },
-                  "db210t": {
-                    userid: "db210t",
+                  "dp210t": {
+                    userid: "dp210t",
                     name: "管理者200",
                     school: "小学校",
                     grade: "2",
@@ -157,8 +157,8 @@ testpass = Digest::MD5.hexdigest("testpass")
                       bronze: 0 
                     }
                   },
-                  "db221": {
-                    userid: "db221",
+                  "dp221": {
+                    userid: "dp221",
                     name: "学習者301",
                     school: "小学校",
                     grade: "2",
@@ -174,8 +174,8 @@ testpass = Digest::MD5.hexdigest("testpass")
                       bronze: 0 
                     }
                   },
-                  "db222": {
-                    userid: "db222",
+                  "dp222": {
+                    userid: "dp222",
                     name: "学習者302",
                     school: "小学校",
                     grade: "2",
@@ -191,8 +191,8 @@ testpass = Digest::MD5.hexdigest("testpass")
                       bronze: 0 
                     }
                   },
-                  "db223": {
-                    userid: "db223",
+                  "dp223": {
+                    userid: "dp223",
                     name: "学習者303",
                     school: "小学校",
                     grade: "2",
@@ -208,8 +208,8 @@ testpass = Digest::MD5.hexdigest("testpass")
                       bronze: 0 
                     }
                   },
-                  "db224": {
-                    userid: "db224",
+                  "dp224": {
+                    userid: "dp224",
                     name: "学習者304",
                     school: "小学校",
                     grade: "2",
@@ -225,8 +225,8 @@ testpass = Digest::MD5.hexdigest("testpass")
                       bronze: 0 
                     }
                   },
-                  "db220t": {
-                    userid: "db220t",
+                  "dp220t": {
+                    userid: "dp220t",
                     name: "管理者300",
                     school: "小学校",
                     grade: "2",
