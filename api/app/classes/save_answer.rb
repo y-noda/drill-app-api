@@ -20,18 +20,44 @@ class SaveAnswer
     set_data[drill_id][:units] = {}
     set_data[drill_id][:units][unit_id] = {}
     set_data[drill_id][:units][unit_id][:answers] = []
+
     set_data[drill_id][:studyingTime] = {}
     set_data[drill_id][:studyingTime][:total] = 0
-    set_data[drill_id][:studyingTime][:dailyArr] = Array.new(12).map{Array.new(31, 0)}
+    set_data[drill_id][:studyingTime][:dailyArr] = Array.new(12).map{Array.new(32, 0)}
+
+    set_data[drill_id][:answeredQuestionNum] = {}
+    set_data[drill_id][:answeredQuestionNum][:total] = 0
+    set_data[drill_id][:answeredQuestionNum][:dailyArr] = Array.new(12).map{Array.new(32, 0)}
+
+    set_data[drill_id][:correctAnswerNum] = {}
+    set_data[drill_id][:correctAnswerNum][:total] = 0
+    set_data[drill_id][:correctAnswerNum][:dailyArr] = Array.new(12).map{Array.new(32, 0)}
+
+
     #教科
     set_data[drill_id][:subject] = parameters[:subject]
 
 
     #回答
     set_data[drill_id][:units][unit_id][:answers].push(parameters)
-    #時間
+
+    #経過時間
     set_data[drill_id][:studyingTime][:total] += parameters[:elapsedTime]
     set_data[drill_id][:studyingTime][:dailyArr][sent_date.to_date.month - 1][sent_date.to_date.day - 1] += parameters[:elapsedTime]
+
+    #totalの問題数
+    set_data[drill_id][:answeredQuestionNum][:total] += parameters[:answeredQuestionNum]
+    set_data[drill_id][:answeredQuestionNum][:dailyArr][sent_date.to_date.month - 1][sent_date.to_date.day - 1] += parameters[:answeredQuestionNum]
+
+    #totalの正解数
+    correct_num = count_correct_answer
+    set_data[drill_id][:correctAnswerNum][:total] += correct_num
+    set_data[drill_id][:correctAnswerNum][:dailyArr][sent_date.to_date.month - 1][sent_date.to_date.day - 1] += correct_num
+
+    set_data[drill_id][:studyingTime][:dailyArr][sent_date.to_date.month - 1][31] = sent_date.to_date.year
+    set_data[drill_id][:answeredQuestionNum][:dailyArr][sent_date.to_date.month - 1][31] = sent_date.to_date.year
+    set_data[drill_id][:correctAnswerNum][:dailyArr][sent_date.to_date.month - 1][31] = sent_date.to_date.year
+    
     #最終更新日
     set_data[drill_id][:updated_date] = sent_date
 
@@ -42,7 +68,16 @@ class SaveAnswer
     set_data[drill_id][:units][unit_id][:answers].push(parameters)
     #時間
     set_data[drill_id][:studyingTime][:total] += parameters[:elapsedTime]
+    set_data[drill_id][:answeredQuestionNum][:total] += parameters[:answeredQuestionNum]
+    correct_num = count_correct_answer
+    set_data[drill_id][:correctAnswerNum][:total] += parameters[:correctAnswerNum]
+
+    #年が違う場合はリセットがいる
+    reset_month
     set_data[drill_id][:studyingTime][:dailyArr][sent_date.to_date.month - 1][sent_date.to_date.day - 1] += parameters[:elapsedTime]
+    set_data[drill_id][:answeredQuestionNum][:dailyArr][sent_date.to_date.month - 1][sent_date.to_date.day - 1] += parameters[:answeredQuestionNum]
+    set_data[drill_id][:correctAnswerNum][:dailyArr][sent_date.to_date.month - 1][sent_date.to_date.day - 1] += count_correct_answer
+
     #最終更新日
     set_data[drill_id][:updated_date] = sent_date
   end
@@ -52,109 +87,43 @@ class SaveAnswer
     set_data[drill_id][:units][unit_id] = {}
     set_data[drill_id][:units][unit_id][:answers] = []
 
-    
     #回答
     set_data[drill_id][:units][unit_id][:answers].push(parameters)
     #時間
     set_data[drill_id][:studyingTime][:total] += parameters[:elapsedTime]
+    set_data[drill_id][:answeredQuestionNum][:total] += parameters[:answeredQuestionNum]
+    correct_num = count_correct_answer
+    set_data[drill_id][:correctAnswerNum][:total] += parameters[:correctAnswerNum]
+
+    #年が違う場合はリセットがいる
+    reset_month
     set_data[drill_id][:studyingTime][:dailyArr][sent_date.to_date.month - 1][sent_date.to_date.day - 1] += parameters[:elapsedTime]
+    set_data[drill_id][:answeredQuestionNum][:dailyArr][sent_date.to_date.month - 1][sent_date.to_date.day - 1] += parameters[:answeredQuestionNum]
+    set_data[drill_id][:correctAnswerNum][:dailyArr][sent_date.to_date.month - 1][sent_date.to_date.day - 1] += count_correct_answer
+
     #最終更新日
     set_data[drill_id][:updated_date] = sent_date
   end
 
-
   protected 
-    def counting(set_year, set_month, correct_answer_num)
+    def reset_month
+      if sent_date.to_date.year != set_data[drill_id][:studyingTime][:dailyArr][sent_date.to_date.month - 1][31]
+        set_data[drill_id][:studyingTime][:dailyArr][sent_date.to_date.month - 1] = Array.new(32, 0)
+        set_data[drill_id][:studyingTime][:dailyArr][sent_date.to_date.month - 1][31] = sent_date.to_date.year
+
+        set_data[drill_id][:answeredQuestionNum][:dailyArr][sent_date.to_date.month - 1] = Array.new(32, 0)
+        set_data[drill_id][:answeredQuestionNum][:dailyArr][sent_date.to_date.month - 1][31] = sent_date.to_date.year
+
+        set_data[drill_id][:correctAnswerNum][:dailyArr][sent_date.to_date.month - 1] = Array.new(32, 0)
+        set_data[drill_id][:correctAnswerNum][:dailyArr][sent_date.to_date.month - 1][31] = sent_date.to_date.year
+      end
+    end
+    
+    def counting
       
-      if sent_year == set_year && sent_month == set_month 
-        #時間
-        set_data[drill_id][:studyingTime][:monthlyArr][-1] += parameters[:elapsedTime]
-        #回答数
-        set_data[drill_id][:answeredQuestionNum][:monthlyArr][-1] += parameters[:answeredQuestionNum]
-        #正答数
-        set_data[drill_id][:correctAnswerNum][:monthlyArr][-1] += correct_answer_num
 
-      else
-        #久しぶりの送信なら0時間をpushして埋める
-        fill_gap(set_year, set_month)
-        #時間
-        set_data[drill_id][:studyingTime][:monthlyArr].push(parameters[:elapsedTime])
-        #回答数
-        set_data[drill_id][:answeredQuestionNum][:monthlyArr].push(parameters[:answeredQuestionNum])
-        #正答数
-        set_data[drill_id][:correctAnswerNum][:monthlyArr].push(correct_answer_num)
 
-        #最終履歴時間の更新
-        set_data[drill_id][:set_year] = sent_year
-        set_data[drill_id][:set_month] = sent_month
-
-        #12ヶ月分に調整
-        limit_months_array(12)
-
-      end
     end 
-
-    def fill_gap(set_year, set_month)
-
-      if sent_year == set_year && sent_month != set_month 
-      #月が違うだけ
-        if sent_month > set_month
-        # 正しい月順
-          gap_months = sent_month - set_month - 1
-          push_zero(gap_months)
-        else 
-        #異常な月順はリセット
-           #時間
-           set_data[drill_id][:studyingTime][:monthlyArr] = []
-           #回答数
-           set_data[drill_id][:answeredQuestionNum][:monthlyArr] = []
-           #正答数
-           set_data[drill_id][:correctAnswerNum][:monthlyArr] = []
-        end
-
-      else
-      #年が異なる
-        year_gap = sent_year - set_year
-        if sent_year < set_year || sent_month >= set_month || year_gap > 1
-        #異常な年順または一年以上たってる場合はリセット
-          #時間
-          set_data[drill_id][:studyingTime][:monthlyArr] = []
-          #回答数
-          set_data[drill_id][:answeredQuestionNum][:monthlyArr] = []
-          #正答数
-          set_data[drill_id][:correctAnswerNum][:monthlyArr] = []
-        elsif sent_month < set_month 
-        # 一年以内の場合
-          gap_months = (sent_month - 1) +  (12 - set_month) 
-          push_zero(gap_months)
-        end
-        
-      end
-    end
-
-    def push_zero(gap_months)
-      gap_months.times do |i|
-        #時間
-        set_data[drill_id][:studyingTime][:monthlyArr].push(0)
-        #回答数
-        set_data[drill_id][:answeredQuestionNum][:monthlyArr].push(0)
-        #正答数
-        set_data[drill_id][:correctAnswerNum][:monthlyArr].push(0)
-      end
-    end
-
-    def limit_months_array(num)
-      array_length = set_data[book_id][:studyingTime][:monthlyArr].length
-      if  array_length > num
-        difference = array_length - num
-        #時間
-        set_data[drill_id][:studyingTime][:monthlyArr].shift(difference)
-        #回答数
-        set_data[drill_id][:answeredQuestionNum][:monthlyArr].shift(difference)
-        #正答数
-        set_data[drill_id][:correctAnswerNum][:monthlyArr].shift(difference)
-      end
-    end
 
     def count_correct_answer
       count = 0
