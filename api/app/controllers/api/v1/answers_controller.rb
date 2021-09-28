@@ -22,36 +22,16 @@ class Api::V1::AnswersController < ApplicationController
     else
     #ユーザのレコードがある時
       set_data = Marshal.load(Marshal.dump(@answer[:save_data]))
-      if @answer[:save_data][drill_id]  
-      #book_idのレコードがある時は追加
-        save_answer = SaveAnswer.new(set_data, parameters, book_id)
-        save_answer.add_book
-
-      elsif @answer[:save_data][drill_id]
-
-      else
-      #book_idのレコードがない時は新規作成
-        set_data[drill_id] = {
-          answers: [],
-          studyingTime: {
-            total: '',
-            monthlyArr: []
-          },
-          answeredQuestionNum: {
-            total: '',
-            monthlyArr: []
-          },
-          loginCountNum: {
-            total: 315,
-            monthlyArr: [5, 15, 20, 10, 8, 6, 21, 45, 9, 61, 77, 45]
-          },
-          correctAnswerNum: {
-            total: '',
-            monthlyArr: []
-          }
-        }
-        save_answer = SaveAnswer.new(set_data, parameters, drill_id)
+      save_answer = SaveAnswer.new(parameters, drill_id, unit_id, set_data)
+      if !@answer[:save_data][drill_id]
+        #book_idのレコードがない時は新規作成
         save_answer.init_book
+      elsif @answer[:save_data][drill_id][:units][unit_id] 
+      #unit_idのレコードがある時はunitを追加
+        save_answer.edit_unit
+      elsif @answer[:save_data][drill_id][:units]
+        #drill_idのレコードがある時は追加
+        save_answer.add_unit
       end
         
       if @answer.update(key: key, save_data: save_answer.set_data)

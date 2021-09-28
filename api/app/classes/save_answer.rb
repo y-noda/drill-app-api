@@ -5,7 +5,7 @@ class SaveAnswer
   attr_accessor :unit_id
   attr_accessor :sent_date
 
-  def initialize(init_data = {}, parameters, drill_id, unit_id)
+  def initialize(parameters, drill_id, unit_id, init_data = {})
     @set_data = init_data
     @parameters = parameters
     @sent_date= parameters[:dateStart]
@@ -17,47 +17,51 @@ class SaveAnswer
   #新規作成
     #初期化
     set_data[drill_id] = {}
-    set_data[drill_id][unit_id] = {}
+    set_data[drill_id][:units] = {}
+    set_data[drill_id][:units][unit_id] = {}
+    set_data[drill_id][:units][unit_id][:answers] = []
     set_data[drill_id][:studyingTime] = {}
     set_data[drill_id][:studyingTime][:total] = 0
     set_data[drill_id][:studyingTime][:dailyArr] = Array.new(12).map{Array.new(31, 0)}
-    
-
     #教科
     set_data[drill_id][:subject] = parameters[:subject]
-    #回答
-    set_data[drill_id][unit_id][:answers] = parameters
-    #時間
-    set_data[drill_id][:studyingTime][:total] = parameters[:elapsedTime]
 
+
+    #回答
+    set_data[drill_id][:units][unit_id][:answers].push(parameters)
+    #時間
+    set_data[drill_id][:studyingTime][:total] += parameters[:elapsedTime]
+    set_data[drill_id][:studyingTime][:dailyArr][sent_date.to_date.month - 1][sent_date.to_date.day - 1] += parameters[:elapsedTime]
     #最終更新日
     set_data[drill_id][:updated_date] = sent_date
 
-
   end
 
-  def add_book
+  def edit_unit
     #回答
-    set_data[drill_id][:answers].push(parameters)
+    set_data[drill_id][:units][unit_id][:answers].push(parameters)
     #時間
     set_data[drill_id][:studyingTime][:total] += parameters[:elapsedTime]
-    #回答数
-    set_data[drill_id][:answeredQuestionNum][:total] += parameters[:answeredQuestionNum]
-    #正答数
-    correct_answer_num = count_correct_answer
-    set_data[drill_id][:correctAnswerNum][:total] += correct_answer_num
-    
-    #最終更新月
-    set_year = set_data[drill_id][:set_year] 
-    set_month = set_data[drill_id][:set_month] 
-    
-    #集計のadd
-    counting(set_year, set_month, correct_answer_num)
+    set_data[drill_id][:studyingTime][:dailyArr][sent_date.to_date.month - 1][sent_date.to_date.day - 1] += parameters[:elapsedTime]
+    #最終更新日
+    set_data[drill_id][:updated_date] = sent_date
   end
 
   def add_unit
+    #初期化
+    set_data[drill_id][:units][unit_id] = {}
+    set_data[drill_id][:units][unit_id][:answers] = []
 
+    
+    #回答
+    set_data[drill_id][:units][unit_id][:answers].push(parameters)
+    #時間
+    set_data[drill_id][:studyingTime][:total] += parameters[:elapsedTime]
+    set_data[drill_id][:studyingTime][:dailyArr][sent_date.to_date.month - 1][sent_date.to_date.day - 1] += parameters[:elapsedTime]
+    #最終更新日
+    set_data[drill_id][:updated_date] = sent_date
   end
+
 
   protected 
     def counting(set_year, set_month, correct_answer_num)
