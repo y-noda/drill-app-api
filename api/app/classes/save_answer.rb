@@ -1,41 +1,42 @@
 class SaveAnswer
   attr_accessor :set_data
   attr_accessor :parameters
-  attr_accessor :book_id
+  attr_accessor :drill_id
   attr_accessor :unit_id
-  attr_accessor :sent_year
-  attr_accessor :sent_month
+  attr_accessor :sent_date
 
-  def initialize(init_data, parameters, drill_id, unit_id)
+  def initialize(init_data = {}, parameters, drill_id, unit_id)
     @set_data = init_data
     @parameters = parameters
-    @sent_year = parameters[:dateStart].to_date.year
-    @sent_month = parameters[:dateStart].to_date.month
+    @sent_date= parameters[:dateStart]
     @drill_id = drill_id
     @unit_id = unit_id
   end
 
-  def fill
+  def init_book
   #新規作成
+    #初期化
+    set_data[drill_id] = {}
+    set_data[drill_id][unit_id] = {}
+    set_data[drill_id][:studyingTime] = {}
+    set_data[drill_id][:studyingTime][:total] = 0
+    set_data[drill_id][:studyingTime][:dailyArr] = Array.new(12).map{Array.new(31, 0)}
+    
+
+    #教科
+    set_data[drill_id][:subject] = parameters[:subject]
     #回答
-    set_data[drill_id][unit_id][:answers].push(parameters)
+    set_data[drill_id][unit_id][:answers] = parameters
     #時間
     set_data[drill_id][:studyingTime][:total] = parameters[:elapsedTime]
-    set_data[drill_id][:studyingTime][:monthlyArr].push(parameters[:elapsedTime])
-    #回答数
-    set_data[drill_id][:answeredQuestionNum][:total] = parameters[:answeredQuestionNum]
-    set_data[drill_id][:answeredQuestionNum][:monthlyArr].push(parameters[:answeredQuestionNum])
-    #正答数
-    correct_answer_num = count_correct_answer
-    set_data[drill_id][:correctAnswerNum][:total] = correct_answer_num
-    set_data[drill_id][:correctAnswerNum][:monthlyArr].push(correct_answer_num)
 
-    #最終更新月
-    set_data[drill_id][:set_year] = sent_year
-    set_data[drill_id][:set_month] = sent_month
+    #最終更新日
+    set_data[drill_id][:updated_date] = sent_date
+
+
   end
 
-  def add
+  def add_book
     #回答
     set_data[drill_id][:answers].push(parameters)
     #時間
@@ -52,6 +53,10 @@ class SaveAnswer
     
     #集計のadd
     counting(set_year, set_month, correct_answer_num)
+  end
+
+  def add_unit
+
   end
 
   protected 
