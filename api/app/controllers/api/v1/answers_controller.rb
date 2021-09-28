@@ -26,9 +26,11 @@ class Api::V1::AnswersController < ApplicationController
       if !@answer[:save_data][drill_id]
         #book_idのレコードがない時は新規作成
         save_answer.init_book
+        
       elsif @answer[:save_data][drill_id][:units][unit_id] 
       #unit_idのレコードがある時はunitを追加
         save_answer.edit_unit
+        
       elsif @answer[:save_data][drill_id][:units]
         #drill_idのレコードがある時は追加
         save_answer.add_unit
