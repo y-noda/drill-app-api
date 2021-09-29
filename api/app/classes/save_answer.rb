@@ -51,6 +51,10 @@ class SaveAnswer
     set_unit
   end
 
+  def adjust
+    fill_gap
+  end
+
   protected 
 
     def fill_gap
@@ -81,6 +85,9 @@ class SaveAnswer
         end
 
       end
+
+      #最終更新日
+      set_data[drill_id][:updated_date] = sent_date
 
     end
 
@@ -113,8 +120,7 @@ class SaveAnswer
       set_data[drill_id][:answeredQuestionNum][:dailyArr][11][sent_date.to_date.day - 1] += parameters[:answeredQuestionNum]
       set_data[drill_id][:correctAnswerNum][:dailyArr][11][sent_date.to_date.day - 1] += count_correct_answer
 
-      #最終更新日
-      set_data[drill_id][:updated_date] = sent_date
+      
     end
 
 end
