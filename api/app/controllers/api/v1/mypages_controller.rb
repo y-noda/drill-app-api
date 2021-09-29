@@ -24,6 +24,23 @@ class Api::V1::MypagesController < ApplicationController
       studyingTime = set_data[book_id][:studyingTime]
       answeredQuestionNum = set_data[book_id][:answeredQuestionNum]
       correctAnswerNum = set_data[book_id][:correctAnswerNum]
+
+      gold = 0
+      silver = 0
+      bronze = 0
+
+      units = set_data[book_id][:units]
+
+      units.keys.each do |key|
+        if units[key][:crown] == 'gold'
+          gold += 1
+        elsif units[key][:crown] == 'silver'
+          silver += 1
+        elsif units[key][:crown] == 'bronze'
+          bronze += 1
+        end
+      end
+
       return_data.push(
         { 
           drillid: book_id, 
@@ -31,9 +48,9 @@ class Api::V1::MypagesController < ApplicationController
           school: school, 
           subject: subject, 
           crownNum: { 
-            gold: 10, 
-            silver: 12, 
-            bronze: 3 
+            gold: gold, 
+            silver: silver, 
+            bronze: bronze 
           },
           studyingTime: studyingTime, 
           answeredQuestionNum: answeredQuestionNum,

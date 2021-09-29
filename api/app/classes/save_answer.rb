@@ -20,6 +20,7 @@ class SaveAnswer
     set_data[drill_id][:units] = {}
     set_data[drill_id][:units][unit_id] = {}
     set_data[drill_id][:units][unit_id][:answers] = [] 
+    set_data[drill_id][:units][unit_id][:crown] = '' 
 
     sum_array = [:studyingTime, :answeredQuestionNum, :correctAnswerNum]
 
@@ -112,6 +113,14 @@ class SaveAnswer
       set_data[drill_id][:answeredQuestionNum][:total] += parameters[:answeredQuestionNum]
       correct_num = count_correct_answer
       set_data[drill_id][:correctAnswerNum][:total] += count_correct_answer
+
+      if parameters[:crown] == 'gold' || set_data[drill_id][:units][unit_id][:crown] == 'gold'
+        set_data[drill_id][:units][unit_id][:crown] = 'gold'
+      elsif parameters[:crown] == 'silver' || set_data[drill_id][:units][unit_id][:crown] == 'silver'
+        set_data[drill_id][:units][unit_id][:crown] = 'silver'
+      elsif parameters[:crown] == 'bronze' || set_data[drill_id][:units][unit_id][:crown] == 'bronze'
+        set_data[drill_id][:units][unit_id][:crown] = 'bronze'
+      end
       
       #最終更新年、月が違う場合は処理がいる
       fill_gap
@@ -120,7 +129,6 @@ class SaveAnswer
       set_data[drill_id][:answeredQuestionNum][:dailyArr][11][sent_date.to_date.day - 1] += parameters[:answeredQuestionNum]
       set_data[drill_id][:correctAnswerNum][:dailyArr][11][sent_date.to_date.day - 1] += count_correct_answer
 
-      
     end
 
 end
