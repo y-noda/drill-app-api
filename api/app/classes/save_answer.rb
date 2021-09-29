@@ -19,19 +19,17 @@ class SaveAnswer
     set_data[drill_id] = {}
     set_data[drill_id][:units] = {}
     set_data[drill_id][:units][unit_id] = {}
-    set_data[drill_id][:units][unit_id][:answers] = []
+    set_data[drill_id][:units][unit_id][:answers] = [] 
 
-    set_data[drill_id][:studyingTime] = {}
-    set_data[drill_id][:studyingTime][:total] = 0
-    set_data[drill_id][:studyingTime][:dailyArr] = Array.new(12).map{Array.new(32, 0)}
+    sum_array = [:studyingTime, :answeredQuestionNum, :correctAnswerNum]
 
-    set_data[drill_id][:answeredQuestionNum] = {}
-    set_data[drill_id][:answeredQuestionNum][:total] = 0
-    set_data[drill_id][:answeredQuestionNum][:dailyArr] = Array.new(12).map{Array.new(32, 0)}
+    sum_array.each do |name|
+      set_data[drill_id][name] = {}
+      set_data[drill_id][name][:total] = 0
+      set_data[drill_id][name][:dailyArr] = Array.new(12).map{Array.new(31, 0)}
+    end
 
-    set_data[drill_id][:correctAnswerNum] = {}
-    set_data[drill_id][:correctAnswerNum][:total] = 0
-    set_data[drill_id][:correctAnswerNum][:dailyArr] = Array.new(12).map{Array.new(32, 0)}
+    set_data[drill_id][:updated_date] = DateTime.now
 
     #教科
     set_data[drill_id][:subject] = parameters[:subject]
@@ -41,6 +39,7 @@ class SaveAnswer
   end
 
   def edit_unit
+    
     set_unit
   end
 
@@ -53,17 +52,36 @@ class SaveAnswer
   end
 
   protected 
-    def reset_month
-      if sent_date.to_date.year != set_data[drill_id][:studyingTime][:dailyArr][sent_date.to_date.month - 1][31]
-        set_data[drill_id][:studyingTime][:dailyArr][sent_date.to_date.month - 1] = Array.new(32, 0)
-        set_data[drill_id][:studyingTime][:dailyArr][sent_date.to_date.month - 1][31] = sent_date.to_date.year
 
-        set_data[drill_id][:answeredQuestionNum][:dailyArr][sent_date.to_date.month - 1] = Array.new(32, 0)
-        set_data[drill_id][:answeredQuestionNum][:dailyArr][sent_date.to_date.month - 1][31] = sent_date.to_date.year
+    def fill_gap
+      
+      gap = (sent_date.to_date.year - set_data[drill_id][:updated_date].to_date.year) * 12 + (sent_date.to_date.month - set_data[drill_id][:updated_date].to_date.month)
+      
+      if gap < 12
+        #同じ年度12ヶ月以内gap月分埋める
+        gap.times do |i|
 
-        set_data[drill_id][:correctAnswerNum][:dailyArr][sent_date.to_date.month - 1] = Array.new(32, 0)
-        set_data[drill_id][:correctAnswerNum][:dailyArr][sent_date.to_date.month - 1][31] = sent_date.to_date.year
+          sum_array = [:studyingTime, :answeredQuestionNum, :correctAnswerNum]
+
+          sum_array.each do |name|
+            set_data[drill_id][name][:dailyArr].push(Array.new(31, 0))
+            set_data[drill_id][name][:dailyArr].delete_at(0)
+          end
+
+        end
+
+      elsif gap >= 12 || gap < 0
+        #12ヶ月以上または不正な送信日時の場合リセット
+
+        sum_array = [:studyingTime, :answeredQuestionNum, :correctAnswerNum]
+
+        sum_array.each do |name|
+          set_data[drill_id][name][:total] = 0
+          set_data[drill_id][name][:dailyArr] = Array.new(12).map{Array.new(31, 0)}
+        end
+
       end
+
     end
 
     def count_correct_answer
@@ -79,6 +97,7 @@ class SaveAnswer
     end
 
     def set_unit
+      
       #回答
       set_data[drill_id][:units][unit_id][:answers].push(parameters)
       #時間
@@ -86,12 +105,13 @@ class SaveAnswer
       set_data[drill_id][:answeredQuestionNum][:total] += parameters[:answeredQuestionNum]
       correct_num = count_correct_answer
       set_data[drill_id][:correctAnswerNum][:total] += count_correct_answer
-
-      #年が違う場合はリセットがいる
-      reset_month
-      set_data[drill_id][:studyingTime][:dailyArr][sent_date.to_date.month - 1][sent_date.to_date.day - 1] += parameters[:elapsedTime]
-      set_data[drill_id][:answeredQuestionNum][:dailyArr][sent_date.to_date.month - 1][sent_date.to_date.day - 1] += parameters[:answeredQuestionNum]
-      set_data[drill_id][:correctAnswerNum][:dailyArr][sent_date.to_date.month - 1][sent_date.to_date.day - 1] += count_correct_answer
+      
+      #最終更新年、月が違う場合は処理がいる
+      fill_gap
+      
+      set_data[drill_id][:studyingTime][:dailyArr][11][sent_date.to_date.day - 1] += parameters[:elapsedTime]
+      set_data[drill_id][:answeredQuestionNum][:dailyArr][11][sent_date.to_date.day - 1] += parameters[:answeredQuestionNum]
+      set_data[drill_id][:correctAnswerNum][:dailyArr][11][sent_date.to_date.day - 1] += count_correct_answer
 
       #最終更新日
       set_data[drill_id][:updated_date] = sent_date
