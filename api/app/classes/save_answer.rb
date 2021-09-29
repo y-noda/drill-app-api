@@ -70,6 +70,7 @@ class SaveAnswer
 
           sum_array.each do |name|
             set_data[drill_id][name][:dailyArr].push(Array.new(31, 0))
+            set_data[drill_id][name][:total] -= set_data[drill_id][name][:dailyArr][0].sum
             set_data[drill_id][name][:dailyArr].delete_at(0)
           end
 
