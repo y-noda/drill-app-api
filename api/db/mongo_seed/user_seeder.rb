@@ -81,7 +81,7 @@ testpass = Digest::MD5.hexdigest("testpass")
                     class: [1, "英語S"],
                     lastLoginDate: "2021-09-09",
                     img: "/img/icon1.png", 
-                    role: "student",
+                    role: "teacher",
                     password: testpass,
                     crownNum:{ 
                       gold: 0,
