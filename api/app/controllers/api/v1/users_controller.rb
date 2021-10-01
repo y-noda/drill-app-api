@@ -18,29 +18,31 @@ class Api::V1::UsersController < ApplicationController
 
     drills = Answer.find_by(key: params[:id])
     drills = drills[:save_data]
-    drills = drills.values
+
+    keys = drills.keys
 
     return_data = {}
 
-    return_data[:user] = user
+    keys.each do |key|
 
-    return_data[:drills] = []
+      value = drills[key]
+      
+      return_data[:user] = user
 
-    drills.each do |drill|
+      return_data[:drills] = []
+
       return_data[:drills].push(
         {
           info: {
-            drillid: drill[:answers][0][:workbookid],
+            drillid: key,
             grade: "soushindataniirete",
             school: "soushindataniirete",
-            subject: drill[:answers][0][:subject]
+            subject: value[:subject]
           },
           log: {
-            studyingTime: drill[:studyingTime][:total],
-            studyCountNum: drill[:studyingTime][:total],
-            answeredUnitNum: drill[:studyingTime][:total],
-            answeredQuestionNum: drill[:answeredQuestionNum][:total],
-            correctAnswerNum: drill[:correctAnswerNum][:total]
+            studyingTime: value[:studyingTime][:total],
+            answeredQuestionNum: value[:answeredQuestionNum][:total],
+            correctAnswerNum: value[:correctAnswerNum][:total]
           },
           daily: {
             studyingTimeArr: []
@@ -62,7 +64,12 @@ class Api::V1::UsersController < ApplicationController
         }
       )
 
+
     end
+
+
+    
+    
     
   
     if user 
