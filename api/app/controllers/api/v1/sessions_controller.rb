@@ -14,7 +14,6 @@ class Api::V1::SessionsController < ApplicationController
 
       @user.delete(:crownNum)
       @user.delete(:password)
-      @user.delete(:img)
       
       render json: @user
     else
