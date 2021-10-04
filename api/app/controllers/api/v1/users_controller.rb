@@ -1,7 +1,7 @@
 class Api::V1::UsersController < ApplicationController
   skip_before_action :verify_authenticity_token
 
-  def index 
+  def userlist
     users = User.find_by(key: 'users')
     users = users[:save_data].values
   
@@ -10,6 +10,10 @@ class Api::V1::UsersController < ApplicationController
     else
       render status: 400, json: { save_data: '失敗' }
     end
+  end
+
+  def index 
+    
   end
 
   def show
