@@ -36,10 +36,13 @@ class Api::V1::UsersController < ApplicationController
       answeredQuestionNum = 0
       correctAnswerNum = 0
 
+
       if params[:startDate] && params[:endDate]
         
         start_month_gap = (value[:updated_date].to_date.year - params[:startDate].to_date.year) * 12 + (value[:updated_date].to_date.month - params[:startDate].to_date.month)
         end_month_gap = (value[:updated_date].to_date.year - params[:endDate].to_date.year) * 12 + (value[:updated_date].to_date.month - params[:endDate].to_date.month)
+
+        
 
         startPosition = 11 - start_month_gap 
         endPosition = 11 - end_month_gap
@@ -56,8 +59,10 @@ class Api::V1::UsersController < ApplicationController
         end
 
         #間の月
-        for i in (startPosition + 1)..(endPosition - 1)
-          studyingTime += array[i].sum
+        if endPosition - startPosition > 1
+          for i in (startPosition + 1)..(endPosition - 1)
+            studyingTime += array[i].sum
+          end
         end
 
 
@@ -80,8 +85,10 @@ class Api::V1::UsersController < ApplicationController
         end
 
         #間の月
-        for i in (startPosition + 1)..(endPosition - 1)
-          answeredQuestionNum += array[i].sum
+        if endPosition - startPosition > 1
+          for i in (startPosition + 1)..(endPosition - 1)
+            answeredQuestionNum += array[i].sum
+          end
         end
 
 
@@ -105,8 +112,10 @@ class Api::V1::UsersController < ApplicationController
         end
 
         #間の月
-        for i in (startPosition + 1)..(endPosition - 1)
-          correctAnswerNum += array[i].sum
+        if endPosition - startPosition > 1
+          for i in (startPosition + 1)..(endPosition - 1)
+            correctAnswerNum += array[i].sum
+          end
         end
 
 
@@ -127,6 +136,7 @@ class Api::V1::UsersController < ApplicationController
 
       units = []
       u_keys = value[:units].keys
+
       #unit
       u_keys.each do |u_key|
         
@@ -143,6 +153,17 @@ class Api::V1::UsersController < ApplicationController
             end
           end
         end
+        if params[:startDate] && params[:endDate]
+          len = value[:units][u_key][:answers].length
+          date = value[:units][u_key][:answers][len - 1][:dateStart]
+
+          if params[:startDate].to_date < date.to_date && params[:endDate].to_date >= date.to_date
+            answeredUnitNum += 1
+          end
+        else
+          answeredUnitNum = u_keys.length
+        end
+
 
         if value[:units][u_key][:crown] == 'gold'
           crown[:gold] += 1
