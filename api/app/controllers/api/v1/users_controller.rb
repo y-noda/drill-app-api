@@ -23,12 +23,53 @@ class Api::V1::UsersController < ApplicationController
 
     return_data = {}
 
+    return_data[:user] = user
+
+    crown = { gold: 0, silver: 0, bronze: 0 }
+
     keys.each do |key|
 
       value = drills[key]
-      
-      return_data[:user] = user
 
+      units = []
+      
+      u_keys = value[:units].keys
+
+      u_keys.each do |u_key|
+        
+        answeredQuestionSum = 0
+        correctAnswerNum = 0
+
+        value[:units][u_key][:answers].each do |answer|
+          answeredQuestionSum += answer[:answeredQuestionNum]
+          answer[:question].each do |question|
+            question[:trial].each do |trial|
+              if trial[:correct] == true
+                correctAnswerNum += 1
+              end
+            end
+          end
+        end
+
+        if value[:units][u_key][:crown] == 'gold'
+          crown[:gold] += 1
+        elsif value[:units][u_key][:crown] == 'silver'
+          crown[:silver] += 1
+        elsif value[:units][u_key][:crown] == 'bronze'
+          crown[:bronze] += 1
+        end
+
+
+        units.push(
+          {
+            "id": u_key,
+            "title": u_key,
+            "answeredQuestionNum": answeredQuestionSum, 
+            "correctAnswerNum": correctAnswerNum
+          }
+        )
+      end
+      
       return_data[:drills] = []
 
       return_data[:drills].push(
@@ -41,37 +82,22 @@ class Api::V1::UsersController < ApplicationController
           },
           log: {
             studyingTime: value[:studyingTime][:total],
+            answeredUnitNum: u_keys.length,
             answeredQuestionNum: value[:answeredQuestionNum][:total],
             correctAnswerNum: value[:correctAnswerNum][:total]
           },
           daily: {
             studyingTimeArr: []
           },
-          units:[
-            {
-                id: "japanese_el_grd1_1",
-                title: "かんじの　よみ",
-                answeredQuestionNum: 932, 
-                correctAnswerNum: 80, 
-            },
-            {
-                id: "japanese_el_grd1_2",
-                title: "かんじの　かき",
-                answeredQuestionNum: 932,
-                correctAnswerNum: 80
-            }
-          ]
+          units: units
         }
       )
 
+      return_data[:user][:crownNum] = crown
 
     end
 
 
-    
-    
-    
-  
     if user 
       render status: 200, json: return_data
     else
