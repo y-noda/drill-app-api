@@ -13,9 +13,11 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def show
+    
     users = User.find_by(key: 'users')
+    
     user = users[:save_data][params[:id]]
-
+    
     drills = Answer.find_by(key: params[:id])
     drills = drills[:save_data]
 
@@ -28,24 +30,115 @@ class Api::V1::UsersController < ApplicationController
     crown = { gold: 0, silver: 0, bronze: 0 }
 
     keys.each do |key|
-
       value = drills[key]
 
-      units = []
-      
-      u_keys = value[:units].keys
+      studyingTime = 0
+      answeredQuestionNum = 0
+      correctAnswerNum = 0
 
+      if params[:startDate] && params[:endDate]
+        
+        start_month_gap = (value[:updated_date].to_date.year - params[:startDate].to_date.year) * 12 + (value[:updated_date].to_date.month - params[:startDate].to_date.month)
+        end_month_gap = (value[:updated_date].to_date.year - params[:endDate].to_date.year) * 12 + (value[:updated_date].to_date.month - params[:endDate].to_date.month)
+
+        startPosition = 11 - start_month_gap 
+        endPosition = 11 - end_month_gap
+
+        #studyingTime
+        
+        array = value[:studyingTime][:dailyArr]
+
+        #初月
+        array[startPosition].each_with_index do |el, index|
+          if index >= params[:startDate].to_date.day - 1
+            studyingTime += el
+          end
+        end
+
+        #間の月
+        for i in (startPosition + 1)..(endPosition - 1)
+          studyingTime += array[i].sum
+        end
+
+
+        #終月
+        array[endPosition].each_with_index do |el, index|
+          if index <= params[:endDate].to_date.day - 1
+            studyingTime += el
+          end
+        end
+
+        # answeredQuestionNum
+        
+        array = value[:answeredQuestionNum][:dailyArr]
+
+        #初月
+        array[startPosition].each_with_index do |el, index|
+          if index >= params[:startDate].to_date.day - 1
+            answeredQuestionNum += el
+          end
+        end
+
+        #間の月
+        for i in (startPosition + 1)..(endPosition - 1)
+          answeredQuestionNum += array[i].sum
+        end
+
+
+        #終月
+        array[endPosition].each_with_index do |el, index|
+          if index <= params[:endDate].to_date.day - 1
+            answeredQuestionNum += el
+          end
+        end
+        
+
+        # correctAnswerNum
+        
+        array = value[:correctAnswerNum][:dailyArr]
+
+        #初月
+        array[startPosition].each_with_index do |el, index|
+          if index >= params[:startDate].to_date.day - 1
+            correctAnswerNum += el
+          end
+        end
+
+        #間の月
+        for i in (startPosition + 1)..(endPosition - 1)
+          correctAnswerNum += array[i].sum
+        end
+
+
+        #終月
+        array[endPosition].each_with_index do |el, index|
+          if index <= params[:endDate].to_date.day - 1
+            correctAnswerNum += el
+          end
+        end
+      else 
+        
+        studyingTime = value[:studyingTime][:total]
+        answeredQuestionNum = value[:answeredQuestionNum][:total]
+        correctAnswerNum = value[:correctAnswerNum][:total]
+        
+      end
+
+
+      units = []
+      u_keys = value[:units].keys
+      #unit
       u_keys.each do |u_key|
         
-        answeredQuestionSum = 0
-        correctAnswerNum = 0
+        answeredQSum = 0
+        correctANum = 0
 
         value[:units][u_key][:answers].each do |answer|
-          answeredQuestionSum += answer[:answeredQuestionNum]
+          answeredQSum += answer[:answeredQuestionNum]
           answer[:question].each do |question|
             question[:trial].each do |trial|
               if trial[:correct] == true
-                correctAnswerNum += 1
+                correctANum += 1
               end
             end
           end
@@ -64,8 +157,8 @@ class Api::V1::UsersController < ApplicationController
           {
             "id": u_key,
             "title": u_key,
-            "answeredQuestionNum": answeredQuestionSum, 
-            "correctAnswerNum": correctAnswerNum
+            "answeredQuestionNum": answeredQSum, 
+            "correctAnswerNum": correctANum
           }
         )
       end
@@ -81,13 +174,13 @@ class Api::V1::UsersController < ApplicationController
             subject: value[:subject]
           },
           log: {
-            studyingTime: value[:studyingTime][:total],
+            studyingTime: studyingTime,
             answeredUnitNum: u_keys.length,
-            answeredQuestionNum: value[:answeredQuestionNum][:total],
-            correctAnswerNum: value[:correctAnswerNum][:total]
+            answeredQuestionNum: answeredQuestionNum,
+            correctAnswerNum: correctAnswerNum
           },
           daily: {
-            studyingTimeArr: []
+            studyingTimeArr: value[:studyingTime][:dailyArr]
           },
           units: units
         }
@@ -96,7 +189,6 @@ class Api::V1::UsersController < ApplicationController
       return_data[:user][:crownNum] = crown
 
     end
-
 
     if user 
       render status: 200, json: return_data
