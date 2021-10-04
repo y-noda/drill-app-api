@@ -12,7 +12,7 @@ testpass = Digest::MD5.hexdigest("testpass")
                     schoolid: "",
                     class: [1, "英語S"],
                     lastLoginDate: "2021-09-09",
-                    img: "/img/icon1.png", 
+                    img: "/img/profileicon/img1.jpg", 
                     role: "student",
                     password: testpass,
                     crownNum:{ 
@@ -29,7 +29,7 @@ testpass = Digest::MD5.hexdigest("testpass")
                     schoolid: "",
                     class: [1, "英語S"],
                     lastLoginDate: "2021-09-09",
-                    img: "/img/icon1.png", 
+                    img: "/img/profileicon/img2.jpg", 
                     role: "student",
                     password: testpass,
                     crownNum:{ 
@@ -46,7 +46,7 @@ testpass = Digest::MD5.hexdigest("testpass")
                     schoolid: "",
                     class: [1, "英語S"],
                     lastLoginDate: "2021-09-09",
-                    img: "/img/icon1.png", 
+                    img: "/img/profileicon/img3.jpg", 
                     role: "student",
                     password: testpass,
                     crownNum:{ 
@@ -63,7 +63,7 @@ testpass = Digest::MD5.hexdigest("testpass")
                     schoolid: "",
                     class: [1, "英語S"],
                     lastLoginDate: "2021-09-09",
-                    img: "/img/icon1.png", 
+                    img: "/img/profileicon/img4.jpg", 
                     role: "student",
                     password: testpass,
                     crownNum:{ 
@@ -80,7 +80,7 @@ testpass = Digest::MD5.hexdigest("testpass")
                     schoolid: "",
                     class: [1, "英語S"],
                     lastLoginDate: "2021-09-09",
-                    img: "/img/icon1.png", 
+                    img: "/img/profileicon/img5.jpg", 
                     role: "teacher",
                     password: testpass,
                     crownNum:{ 
@@ -97,7 +97,7 @@ testpass = Digest::MD5.hexdigest("testpass")
                     schoolid: "",
                     class: [1, "英語S"],
                     lastLoginDate: "2021-09-09",
-                    img: "/img/icon1.png", 
+                    img: "/img/profileicon/img6.jpg", 
                     role: "student",
                     password: testpass,
                     crownNum:{ 
@@ -114,7 +114,7 @@ testpass = Digest::MD5.hexdigest("testpass")
                     schoolid: "",
                     class: [1, "英語S"],
                     lastLoginDate: "2021-09-09",
-                    img: "/img/icon1.png", 
+                    img: "/img/profileicon/img7.jpg", 
                     role: "student",
                     password: testpass,
                     crownNum:{ 
@@ -131,7 +131,7 @@ testpass = Digest::MD5.hexdigest("testpass")
                     schoolid: "",
                     class: [1, "英語S"],
                     lastLoginDate: "2021-09-09",
-                    img: "/img/icon1.png", 
+                    img: "/img/profileicon/img8.jpg", 
                     role: "student",
                     password: testpass,
                     crownNum:{ 
@@ -148,7 +148,7 @@ testpass = Digest::MD5.hexdigest("testpass")
                     schoolid: "",
                     class: [1, "英語S"],
                     lastLoginDate: "2021-09-09",
-                    img: "/img/icon1.png", 
+                    img: "/img/profileicon/img9.jpg", 
                     role: "teacher",
                     password: testpass,
                     crownNum:{ 
@@ -165,7 +165,7 @@ testpass = Digest::MD5.hexdigest("testpass")
                     schoolid: "",
                     class: [2, "英語S"],
                     lastLoginDate: "2021-09-09",
-                    img: "/img/icon1.png", 
+                    img: "/img/profileicon/img10.jpg", 
                     role: "student",
                     password: testpass,
                     crownNum:{ 
@@ -182,7 +182,7 @@ testpass = Digest::MD5.hexdigest("testpass")
                     schoolid: "",
                     class: [2, "英語S"],
                     lastLoginDate: "2021-09-09",
-                    img: "/img/icon1.png", 
+                    img: "/img/profileicon/img11.jpg", 
                     role: "student",
                     password: testpass,
                     crownNum:{ 
@@ -199,7 +199,7 @@ testpass = Digest::MD5.hexdigest("testpass")
                     schoolid: "",
                     class: [2, "英語S"],
                     lastLoginDate: "2021-09-09",
-                    img: "/img/icon1.png", 
+                    img: "/img/profileicon/img12.jpg", 
                     role: "student",
                     password: testpass,
                     crownNum:{ 
@@ -216,7 +216,7 @@ testpass = Digest::MD5.hexdigest("testpass")
                     schoolid: "",
                     class: [2, "英語S"],
                     lastLoginDate: "2021-09-09",
-                    img: "/img/icon1.png", 
+                    img: "/img/profileicon/img13.jpg", 
                     role: "student",
                     password: testpass,
                     crownNum:{ 
@@ -233,7 +233,7 @@ testpass = Digest::MD5.hexdigest("testpass")
                     schoolid: "",
                     class: [2, "英語S"],
                     lastLoginDate: "2021-09-09",
-                    img: "/img/icon1.png", 
+                    img: "/img/profileicon/img14.jpg", 
                     role: "teacher",
                     password: testpass,
                     crownNum:{ 
