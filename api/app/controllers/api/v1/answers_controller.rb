@@ -4,6 +4,7 @@ class Api::V1::AnswersController < ApplicationController
 
   skip_before_action :verify_authenticity_token
   def create
+
     parameters = params[:session].to_unsafe_h  #後で strongparameterかましてto_hにする
     key = parameters[:userid]
     drill_id = parameters[:drillid].to_s.to_sym
