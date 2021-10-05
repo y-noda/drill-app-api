@@ -254,8 +254,9 @@ class Api::V1::UsersController < ApplicationController
           )
         end
 
-        studyingTimeArr = ConvertMonthSpan.new(value[:studyingTime][:dailyArr], value[:updated_date])
+        studay_time_calc = ConvertMonthSpan.new(value[:studyingTime][:dailyArr], value[:updated_date])
 
+        studyingTimeArr = studay_time_calc.convert_span
 
         return_data[:drills] = []
 
@@ -263,8 +264,8 @@ class Api::V1::UsersController < ApplicationController
           {
             info: {
               drillid: key,
-              grade: "soushindataniirete",
-              school: "soushindataniirete",
+              grade: value[:grade],
+              school: value[:school],
               subject: value[:subject]
             },
             log: {
