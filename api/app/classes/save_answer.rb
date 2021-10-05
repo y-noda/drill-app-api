@@ -96,10 +96,8 @@ class SaveAnswer
     def count_correct_answer
       count = 0
       parameters[:question].each do |question|
-        question[:trial].each do |ans|
-          if ans[:correct]  
+        if question[:trial][0][:correct]  
             count = count + 1
-          end
         end
       end
       return count
