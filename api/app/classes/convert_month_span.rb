@@ -11,7 +11,7 @@ class ConvertMonthSpan
   end
 
   def convert_span
-
+    
     last_month = updated_time.to_date.month
 
     if last_month < 4
