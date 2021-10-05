@@ -37,14 +37,15 @@ class Api::V1::UsersController < ApplicationController
     daily_study_sum = 0
     answer_question_sum = 0
     correct_answer_sum = 0
+    study_count_sum = 0
 
     user_keys.each do |user_key|
 
-      #同期
-      
       @answer = Answer.find_by(key: user_key)
 
       if @answer
+
+        #同期
         set_data = Marshal.load(Marshal.dump(@answer[:save_data]))
 
         keys = @answer[:save_data].keys
@@ -52,6 +53,9 @@ class Api::V1::UsersController < ApplicationController
           save_answer = SaveAnswer.new({ "dateStart": DateTime.now }, key, 'kari', set_data)
           save_answer.adjust
         end
+
+        @answer.update(key: user_key, save_data: set_data)
+
 
         user_answer = @answer[:save_data]
         book_keys = user_answer.keys
@@ -80,6 +84,22 @@ class Api::V1::UsersController < ApplicationController
             month_sum = MonthArraySum.new(daily_correct_array, params[:startDate], params[:endDate], updated_date)
             correct_answer_sum += month_sum.array_sum
 
+
+            #studyCountNum
+
+            unit_keys = user_answer[i][:units].keys
+
+            unit_keys.each do |unit_key|
+              answers = user_answer[i][:units][unit_key][:answers]
+
+              answers.each do |answer|
+                date = answer[:dateStart].to_date
+                if params[:startDate].to_date <= date.to_date && params[:endDate].to_date >= date.to_date
+                  study_count_sum += 1
+                end
+              end
+            end
+
           else
             daily_study_array.each do |array|
               daily_study_sum += array.sum
@@ -93,14 +113,16 @@ class Api::V1::UsersController < ApplicationController
               correct_answer_sum += array.sum
             end
 
+            study_count_sum += user_answer[i][:units].keys.length
           end
+
         end
       end
     end
 
     return_data = {
       "studyingTime": daily_study_sum, 
-      "studyCountNum": 120, 
+      "studyCountNum": study_count_sum, 
       "answeredQuestionNum": answer_question_sum, 
       "correctAnswerNum": correct_answer_sum
     }
