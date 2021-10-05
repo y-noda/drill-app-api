@@ -48,7 +48,7 @@ services:
     depends_on:
       - api
     ports:
-      - "1080:80"
+      - "80:80"
     volumes:
       - ./api/:/api
 
