@@ -34,6 +34,10 @@ class SaveAnswer
 
     #教科
     set_data[drill_id][:subject] = parameters[:subject]
+    #学年
+    set_data[drill_id][:grade] = parameters[:grade]
+    #学校
+    set_data[drill_id][:school] = parameters[:school]
 
     set_unit
     
