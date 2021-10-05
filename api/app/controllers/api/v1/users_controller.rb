@@ -132,7 +132,6 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def show
-
     
     users = User.find_by(key: 'users')
     
@@ -172,6 +171,7 @@ class Api::V1::UsersController < ApplicationController
         answeredQuestionNum = 0
         correctAnswerNum = 0
         answeredUnitNum = 0
+        study_count_Num = 0
 
         daily_study_array = value[:studyingTime][:dailyArr]
         daily_answer_array = value[:answeredQuestionNum][:dailyArr]
@@ -190,12 +190,18 @@ class Api::V1::UsersController < ApplicationController
           month_sum = MonthArraySum.new(daily_correct_array, params[:startDate], params[:endDate], updated_date)
           correctAnswerNum += month_sum.array_sum
 
+           #studyCountNum
+
+           if params[:startDate].to_date < updated_date.to_date && params[:endDate].to_date >= updated_date.to_date
+            study_count_Num += 1
+           end
+
         else 
           
           studyingTime = value[:studyingTime][:total]
           answeredQuestionNum = value[:answeredQuestionNum][:total]
           correctAnswerNum = value[:correctAnswerNum][:total]
-          
+          study_count_Num += 1
         end
 
 
@@ -263,6 +269,7 @@ class Api::V1::UsersController < ApplicationController
             },
             log: {
               studyingTime: studyingTime,
+              studyCountNum: study_count_Num,
               answeredUnitNum: answeredUnitNum,
               answeredQuestionNum: answeredQuestionNum,
               correctAnswerNum: correctAnswerNum
