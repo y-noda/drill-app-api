@@ -21,6 +21,7 @@ class SaveAnswer
     set_data[drill_id][:units][unit_id] = {}
     set_data[drill_id][:units][unit_id][:answers] = [] 
     set_data[drill_id][:units][unit_id][:crown] = '' 
+    set_data[drill_id][:units][unit_id][:unitTitle] = ''
 
     sum_array = [:studyingTime, :answeredQuestionNum, :correctAnswerNum]
 
@@ -124,6 +125,8 @@ class SaveAnswer
       elsif parameters[:crown] == 'bronze' || set_data[drill_id][:units][unit_id][:crown] == 'bronze'
         set_data[drill_id][:units][unit_id][:crown] = 'bronze'
       end
+
+      set_data[drill_id][:units][unit_id][:unitTitle] = parameters[:unitTitle]
       
       #最終更新年、月が違う場合は処理がいる
       fill_gap
