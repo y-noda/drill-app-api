@@ -23,6 +23,8 @@ class Api::V1::MypagesController < ApplicationController
       school = "dummy_gakkou"
 
       daily_studying_time = ConvertMonthSpan.new(set_data[book_id][:studyingTime][:dailyArr], set_data[book_id][:updated_date])
+      daily_answered_question = ConvertMonthSpan.new(set_data[book_id][:answeredQuestionNum][:dailyArr], set_data[book_id][:updated_date])
+      daily_correct_answer = ConvertMonthSpan.new(set_data[book_id][:correctAnswerNum][:dailyArr], set_data[book_id][:updated_date])
       
       subject = set_data[book_id][:subject]
       
@@ -30,8 +32,15 @@ class Api::V1::MypagesController < ApplicationController
         total: set_data[book_id][:studyingTime][:total],
         dailyArr: daily_studying_time.convert_span
       }
-      answeredQuestionNum = set_data[book_id][:answeredQuestionNum]
-      correctAnswerNum = set_data[book_id][:correctAnswerNum]
+      answeredQuestionNum = {
+        total: set_data[book_id][:answeredQuestionNum][:total],
+        dailyArr: daily_answered_question.convert_span
+      }
+      
+      correctAnswerNum = {
+        total: set_data[book_id][:correctAnswerNum][:total],
+        dailyArr: daily_correct_answer.convert_span
+      }
 
       gold = 0
       silver = 0
