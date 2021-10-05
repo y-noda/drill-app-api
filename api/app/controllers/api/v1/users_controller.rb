@@ -1,5 +1,7 @@
 class Api::V1::UsersController < ApplicationController
   skip_before_action :verify_authenticity_token
+  require './app/classes/save_answer'
+  require './app/classes/month_array_sum'
 
 
   def index
@@ -14,6 +16,8 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def summary
+    
+    #必要なuserlistをuser_keysとして取り出し
     users = User.find_by(key: 'users')
     users = users[:save_data]
     user_keys = users.keys
@@ -28,11 +32,81 @@ class Api::V1::UsersController < ApplicationController
       else
         true
       end
-
     end
 
-    if users 
-      render status: 200, json: taken_user_keys
+    daily_study_sum = 0
+    answer_question_sum = 0
+    correct_answer_sum = 0
+
+    user_keys.each do |user_key|
+
+      #同期
+      
+      @answer = Answer.find_by(key: user_key)
+
+      if @answer
+        set_data = Marshal.load(Marshal.dump(@answer[:save_data]))
+
+        keys = @answer[:save_data].keys
+        keys.each do |key|
+          save_answer = SaveAnswer.new({ "dateStart": DateTime.now }, key, 'kari', set_data)
+          save_answer.adjust
+        end
+
+        user_answer = @answer[:save_data]
+        book_keys = user_answer.keys
+
+        #教科
+        if params[:subject]
+          book_keys = book_keys.select.each do |book_key|
+            user_answer[book_key][:subject] == params[:subject]
+          end
+        end
+
+        book_keys.each do |i|
+          daily_study_array = user_answer[i][:studyingTime][:dailyArr]
+          daily_answer_array = user_answer[i][:answeredQuestionNum][:dailyArr]
+          daily_correct_array = user_answer[i][:correctAnswerNum][:dailyArr]
+
+          updated_date = user_answer[i][:updated_date]
+
+          if params[:startDate] && params[:endDate]
+            month_sum = MonthArraySum.new(daily_study_array, params[:startDate], params[:endDate], updated_date)
+            daily_study_sum += month_sum.array_sum
+
+            month_sum = MonthArraySum.new(daily_answer_array, params[:startDate], params[:endDate], updated_date)
+            answer_question_sum += month_sum.array_sum
+
+            month_sum = MonthArraySum.new(daily_correct_array, params[:startDate], params[:endDate], updated_date)
+            correct_answer_sum += month_sum.array_sum
+
+          else
+            daily_study_array.each do |array|
+              daily_study_sum += array.sum
+            end
+
+            daily_answer_array.each do |array|
+              answer_question_sum += array.sum
+            end
+
+            daily_correct_array.each do |array|
+              correct_answer_sum += array.sum
+            end
+
+          end
+        end
+      end
+    end
+
+    return_data = {
+      "studyingTime": daily_study_sum, 
+      "studyCountNum": 120, 
+      "answeredQuestionNum": answer_question_sum, 
+      "correctAnswerNum": correct_answer_sum
+    }
+
+    if users && return_data
+      render status: 200, json: return_data
     else
       render status: 400, json: { save_data: '失敗' }
     end

@@ -4,6 +4,7 @@ class Api::V1::MypagesController < ApplicationController
   require './app/classes/convert_month_span'
 
   def log
+    #同期
     @answer = Answer.find_by(key: params[:user_id])
 
     set_data = Marshal.load(Marshal.dump(@answer[:save_data]))
