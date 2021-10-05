@@ -161,6 +161,7 @@ class Api::V1::UsersController < ApplicationController
       return_data = {}
 
       return_data[:user] = user
+      return_data[:drills] = []
 
       crown = { gold: 0, silver: 0, bronze: 0 }
 
@@ -258,7 +259,7 @@ class Api::V1::UsersController < ApplicationController
 
         studyingTimeArr = studay_time_calc.convert_span
 
-        return_data[:drills] = []
+        
 
         return_data[:drills].push(
           {
