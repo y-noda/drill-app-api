@@ -13,6 +13,31 @@ class Api::V1::UsersController < ApplicationController
     end
   end
 
+  def summary
+    users = User.find_by(key: 'users')
+    users = users[:save_data]
+    user_keys = users.keys
+    taken_user_keys = user_keys.select.each do |user_key|
+      if params[:grade] && params[:class]
+        
+        users[user_key][:grade] == params[:grade] && users[user_key][:class].include?(params[:class])
+      elsif params[:grade] 
+        users[user_key][:grade] == params[:grade]
+      elsif params[:class]
+        users[user_key][:class].include?(params[:class])
+      else
+        true
+      end
+
+    end
+
+    if users 
+      render status: 200, json: taken_user_keys
+    else
+      render status: 400, json: { save_data: '失敗' }
+    end
+  end
+
   def show
     
     users = User.find_by(key: 'users')
