@@ -20,13 +20,13 @@ class Api::V1::MypagesController < ApplicationController
     return_data = []
     keys.each do |key|
       book_id = key.to_s.to_sym
-      grade = 1 
-      school = "dummy_gakkou"
 
       daily_studying_time = ConvertMonthSpan.new(set_data[book_id][:studyingTime][:dailyArr], set_data[book_id][:updated_date])
       daily_answered_question = ConvertMonthSpan.new(set_data[book_id][:answeredQuestionNum][:dailyArr], set_data[book_id][:updated_date])
       daily_correct_answer = ConvertMonthSpan.new(set_data[book_id][:correctAnswerNum][:dailyArr], set_data[book_id][:updated_date])
       
+      grade = set_data[book_id][:grade]
+      school = set_data[book_id][:school]
       subject = set_data[book_id][:subject]
       
       studyingTime = {
