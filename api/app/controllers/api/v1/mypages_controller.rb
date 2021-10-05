@@ -1,6 +1,7 @@
 class Api::V1::MypagesController < ApplicationController
   skip_before_action :verify_authenticity_token
   require './app/classes/save_answer'
+  require './app/classes/convert_month_span'
 
   def log
     @answer = Answer.find_by(key: params[:user_id])
@@ -20,8 +21,15 @@ class Api::V1::MypagesController < ApplicationController
       book_id = key.to_s.to_sym
       grade = 1 
       school = "dummy_gakkou"
+
+      daily_studying_time = ConvertMonthSpan.new(set_data[book_id][:studyingTime][:dailyArr], set_data[book_id][:updated_date])
+      
       subject = set_data[book_id][:subject]
-      studyingTime = set_data[book_id][:studyingTime]
+      
+      studyingTime = {
+        total: set_data[book_id][:studyingTime][:total],
+        dailyArr: daily_studying_time.convert_span
+      }
       answeredQuestionNum = set_data[book_id][:answeredQuestionNum]
       correctAnswerNum = set_data[book_id][:correctAnswerNum]
 
