@@ -41,7 +41,7 @@ class Api::V1::UsersController < ApplicationController
     correct_answer_sum = 0
     study_count_sum = 0
 
-    user_keys.each do |user_key|
+    taken_user_keys.each do |user_key|
 
       @answer = Answer.find_by(key: user_key)
 
@@ -120,7 +120,8 @@ class Api::V1::UsersController < ApplicationController
       "studyingTime": daily_study_sum, 
       "studyCountNum": study_count_sum, 
       "answeredQuestionNum": answer_question_sum, 
-      "correctAnswerNum": correct_answer_sum
+      "correctAnswerNum": correct_answer_sum,
+      "userNum": taken_user_keys.length
     }
 
     if users && return_data
