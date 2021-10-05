@@ -2,6 +2,8 @@ class Api::V1::UsersController < ApplicationController
   skip_before_action :verify_authenticity_token
   require './app/classes/save_answer'
   require './app/classes/month_array_sum'
+  require './app/classes/unit_el_sum'
+  require './app/classes/convert_month_span'
 
 
   def index
@@ -87,17 +89,10 @@ class Api::V1::UsersController < ApplicationController
 
             #studyCountNum
 
-            unit_keys = user_answer[i][:units].keys
+            date = user_answer[i][:updated_date].to_date
 
-            unit_keys.each do |unit_key|
-              answers = user_answer[i][:units][unit_key][:answers]
-
-              answers.each do |answer|
-                date = answer[:dateStart].to_date
-                if params[:startDate].to_date <= date.to_date && params[:endDate].to_date >= date.to_date
-                  study_count_sum += 1
-                end
-              end
+            if params[:startDate].to_date < date && params[:endDate].to_date >= date
+              study_count_sum += 1
             end
 
           else
@@ -112,13 +107,14 @@ class Api::V1::UsersController < ApplicationController
             daily_correct_array.each do |array|
               correct_answer_sum += array.sum
             end
+            study_count_sum += 1
 
-            study_count_sum += user_answer[i][:units].keys.length
           end
 
         end
       end
     end
+    
 
     return_data = {
       "studyingTime": daily_study_sum, 
@@ -135,209 +131,159 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def show
+
     
     users = User.find_by(key: 'users')
     
     user = users[:save_data][params[:id]]
     
     drills = Answer.find_by(key: params[:id])
-    drills = drills[:save_data]
 
-    keys = drills.keys
+    if drills
+      
+      #同期
+      set_data = Marshal.load(Marshal.dump(drills[:save_data]))
 
-    return_data = {}
+      keys = drills[:save_data].keys
 
-    return_data[:user] = user
-
-    crown = { gold: 0, silver: 0, bronze: 0 }
-
-    keys.each do |key|
-      value = drills[key]
-
-      studyingTime = 0
-      answeredQuestionNum = 0
-      correctAnswerNum = 0
-
-
-      if params[:startDate] && params[:endDate]
-        
-        start_month_gap = (value[:updated_date].to_date.year - params[:startDate].to_date.year) * 12 + (value[:updated_date].to_date.month - params[:startDate].to_date.month)
-        end_month_gap = (value[:updated_date].to_date.year - params[:endDate].to_date.year) * 12 + (value[:updated_date].to_date.month - params[:endDate].to_date.month)
-
-        
-
-        startPosition = 11 - start_month_gap 
-        endPosition = 11 - end_month_gap
-
-        #studyingTime
-        
-        array = value[:studyingTime][:dailyArr]
-
-        #初月
-        array[startPosition].each_with_index do |el, index|
-          if index >= params[:startDate].to_date.day - 1
-            studyingTime += el
-          end
-        end
-
-        #間の月
-        if endPosition - startPosition > 1
-          for i in (startPosition + 1)..(endPosition - 1)
-            studyingTime += array[i].sum
-          end
-        end
-
-
-        #終月
-        array[endPosition].each_with_index do |el, index|
-          if index <= params[:endDate].to_date.day - 1
-            studyingTime += el
-          end
-        end
-
-        # answeredQuestionNum
-        
-        array = value[:answeredQuestionNum][:dailyArr]
-
-        #初月
-        array[startPosition].each_with_index do |el, index|
-          if index >= params[:startDate].to_date.day - 1
-            answeredQuestionNum += el
-          end
-        end
-
-        #間の月
-        if endPosition - startPosition > 1
-          for i in (startPosition + 1)..(endPosition - 1)
-            answeredQuestionNum += array[i].sum
-          end
-        end
-
-
-        #終月
-        array[endPosition].each_with_index do |el, index|
-          if index <= params[:endDate].to_date.day - 1
-            answeredQuestionNum += el
-          end
-        end
-        
-
-        # correctAnswerNum
-        
-        array = value[:correctAnswerNum][:dailyArr]
-
-        #初月
-        array[startPosition].each_with_index do |el, index|
-          if index >= params[:startDate].to_date.day - 1
-            correctAnswerNum += el
-          end
-        end
-
-        #間の月
-        if endPosition - startPosition > 1
-          for i in (startPosition + 1)..(endPosition - 1)
-            correctAnswerNum += array[i].sum
-          end
-        end
-
-
-        #終月
-        array[endPosition].each_with_index do |el, index|
-          if index <= params[:endDate].to_date.day - 1
-            correctAnswerNum += el
-          end
-        end
-      else 
-        
-        studyingTime = value[:studyingTime][:total]
-        answeredQuestionNum = value[:answeredQuestionNum][:total]
-        correctAnswerNum = value[:correctAnswerNum][:total]
-        
+      keys.each do |key|
+        save_answer = SaveAnswer.new({ "dateStart": DateTime.now }, key, 'kari', set_data)
+        save_answer.adjust
       end
 
+      drills.update(key: params[:id], save_data: set_data)
 
-      units = []
-      u_keys = value[:units].keys
 
-      #unit
-      u_keys.each do |u_key|
-        
-        answeredQSum = 0
-        correctANum = 0
+      drills = drills[:save_data]
 
-        value[:units][u_key][:answers].each do |answer|
-          answeredQSum += answer[:answeredQuestionNum]
-          answer[:question].each do |question|
-            question[:trial].each do |trial|
-              if trial[:correct] == true
-                correctANum += 1
+      keys = drills.keys
+
+      return_data = {}
+
+      return_data[:user] = user
+
+      crown = { gold: 0, silver: 0, bronze: 0 }
+
+      keys.each do |key|
+        value = drills[key]
+
+        studyingTime = 0
+        answeredQuestionNum = 0
+        correctAnswerNum = 0
+        answeredUnitNum = 0
+
+        daily_study_array = value[:studyingTime][:dailyArr]
+        daily_answer_array = value[:answeredQuestionNum][:dailyArr]
+        daily_correct_array = value[:correctAnswerNum][:dailyArr]
+        updated_date = value[:updated_date]
+
+
+        if params[:startDate] && params[:endDate]
+          
+          month_sum = MonthArraySum.new(daily_study_array, params[:startDate], params[:endDate], updated_date)
+          studyingTime += month_sum.array_sum
+
+          month_sum = MonthArraySum.new(daily_answer_array, params[:startDate], params[:endDate], updated_date)
+          answeredQuestionNum += month_sum.array_sum
+
+          month_sum = MonthArraySum.new(daily_correct_array, params[:startDate], params[:endDate], updated_date)
+          correctAnswerNum += month_sum.array_sum
+
+        else 
+          
+          studyingTime = value[:studyingTime][:total]
+          answeredQuestionNum = value[:answeredQuestionNum][:total]
+          correctAnswerNum = value[:correctAnswerNum][:total]
+          
+        end
+
+
+        units = []
+        u_keys = value[:units].keys
+
+        #unit
+        u_keys.each do |u_key|
+          
+          answeredQSum = 0
+          correctANum = 0
+
+          value[:units][u_key][:answers].each do |answer|
+            answeredQSum += answer[:answeredQuestionNum]
+            answer[:question].each do |question|
+              question[:trial].each do |trial|
+                if trial[:correct] == true
+                  correctANum += 1
+                end
               end
             end
           end
-        end
-        if params[:startDate] && params[:endDate]
-          len = value[:units][u_key][:answers].length
-          date = value[:units][u_key][:answers][len - 1][:dateStart]
 
-          if params[:startDate].to_date < date.to_date && params[:endDate].to_date >= date.to_date
-            answeredUnitNum += 1
+          if params[:startDate] && params[:endDate]
+            len = value[:units][u_key][:answers].length
+            date = value[:units][u_key][:answers][len - 1][:dateStart]
+
+            if params[:startDate].to_date < date.to_date && params[:endDate].to_date >= date.to_date
+              answeredUnitNum += 1
+            end
+          else
+            answeredUnitNum = u_keys.length
           end
-        else
-          answeredUnitNum = u_keys.length
+
+          if value[:units][u_key][:crown] == 'gold'
+            crown[:gold] += 1
+          elsif value[:units][u_key][:crown] == 'silver'
+            crown[:silver] += 1
+          elsif value[:units][u_key][:crown] == 'bronze'
+            crown[:bronze] += 1
+          end
+
+          units.push(
+            {
+              "id": u_key,
+              "title": u_key,
+              "answeredQuestionNum": answeredQSum, 
+              "correctAnswerNum": correctANum
+            }
+          )
         end
 
-
-        if value[:units][u_key][:crown] == 'gold'
-          crown[:gold] += 1
-        elsif value[:units][u_key][:crown] == 'silver'
-          crown[:silver] += 1
-        elsif value[:units][u_key][:crown] == 'bronze'
-          crown[:bronze] += 1
-        end
+        studyingTimeArr = ConvertMonthSpan.new(value[:studyingTime][:dailyArr], value[:updated_date])
 
 
-        units.push(
+        return_data[:drills] = []
+
+        return_data[:drills].push(
           {
-            "id": u_key,
-            "title": u_key,
-            "answeredQuestionNum": answeredQSum, 
-            "correctAnswerNum": correctANum
+            info: {
+              drillid: key,
+              grade: "soushindataniirete",
+              school: "soushindataniirete",
+              subject: value[:subject]
+            },
+            log: {
+              studyingTime: studyingTime,
+              answeredUnitNum: answeredUnitNum,
+              answeredQuestionNum: answeredQuestionNum,
+              correctAnswerNum: correctAnswerNum
+            },
+            daily: {
+              studyingTimeArr: studyingTimeArr
+            },
+            units: units
           }
         )
+
+        return_data[:user][:crownNum] = crown
+
       end
-      
-      return_data[:drills] = []
-
-      return_data[:drills].push(
-        {
-          info: {
-            drillid: key,
-            grade: "soushindataniirete",
-            school: "soushindataniirete",
-            subject: value[:subject]
-          },
-          log: {
-            studyingTime: studyingTime,
-            answeredUnitNum: u_keys.length,
-            answeredQuestionNum: answeredQuestionNum,
-            correctAnswerNum: correctAnswerNum
-          },
-          daily: {
-            studyingTimeArr: value[:studyingTime][:dailyArr]
-          },
-          units: units
-        }
-      )
-
-      return_data[:user][:crownNum] = crown
-
     end
 
-    if user 
+    if user && drills
       render status: 200, json: return_data
     else
       render status: 400, json: { save_data: '失敗' }
     end
 
   end
+
 end
