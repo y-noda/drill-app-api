@@ -247,7 +247,7 @@ class Api::V1::UsersController < ApplicationController
           units.push(
             {
               "id": u_key,
-              "title": u_key,
+              "title": value[:units][u_key][:unitTitle],
               "answeredQuestionNum": answeredQSum, 
               "correctAnswerNum": correctANum
             }
