@@ -38,8 +38,14 @@ class Api::V1::AnswersController < ApplicationController
         #drill_idのレコードがある時は追加
         save_answer.add_unit
       end
+
+      @users = User.find_by(key: 'users')
+
+      new_users_data = Marshal.load(Marshal.dump(@users[:save_data]))
+
+      new_users_data[key][:latest_drill] = parameters[:drillid]
         
-      if @answer.update(key: key, save_data: save_answer.set_data)
+      if @answer.update(key: key, save_data: save_answer.set_data) && @users.update(key: 'users', save_data: new_users_data)
         render status: 200, json: { id: key }
       else
         render status: 400, json: { id: '失敗' }
