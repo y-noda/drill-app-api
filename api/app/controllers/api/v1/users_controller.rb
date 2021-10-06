@@ -1,5 +1,5 @@
 class Api::V1::UsersController < ApplicationController
-  skip_before_action :verify_authenticity_token
+
   require './app/classes/save_answer'
   require './app/classes/month_array_sum'
   require './app/classes/convert_month_span'
