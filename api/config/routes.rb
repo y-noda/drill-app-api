@@ -5,8 +5,8 @@ Rails.application.routes.draw do
       get '/summary', to: 'users#summary'
       resources :answers
       get 'log/:user_id', to: 'mypages#log'
-
-      post '/login', to: 'sessions#login'
+      get '/summary', to: 'users#summary'
+      get '/books/:user_id', to: 'users#books'
       delete '/logout', to: 'sessions#logout'
 
     end
