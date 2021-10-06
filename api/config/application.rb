@@ -17,7 +17,7 @@ module Api
 
     config.middleware.insert_before 0, Rack::Cors do
       allow do
-        origins 'http://test.flak.jp', 'localhost:3000', '127.0.0.1:3000'
+        origins 'http://test.flak.jp', 'localhost:3000', '127.0.0.1:3000', 'http://40.74.136.199/'
         resource '*', 
           headers: :any, 
           methods: [:get, :post, :patch, :put],
