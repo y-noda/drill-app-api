@@ -6,7 +6,7 @@ Rails.application.routes.draw do
       resources :answers
       get 'log/:user_id', to: 'mypages#log'
       get '/summary', to: 'users#summary'
-      get '/books/:user_id', to: 'users#books'
+      get '/books/:user_id', to: 'books#user_books'
       delete '/logout', to: 'sessions#logout'
       post '/login', to: 'sessions#login'
     end
