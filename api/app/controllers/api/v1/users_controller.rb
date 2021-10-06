@@ -25,14 +25,13 @@ class Api::V1::UsersController < ApplicationController
     user_keys = users.keys
     taken_user_keys = user_keys.select.each do |user_key|
       if params[:grade] && params[:class]
-        
-        users[user_key][:grade] == params[:grade] && users[user_key][:class].include?(params[:class])
+        users[user_key][:grade] == params[:grade] && users[user_key][:class].include?(params[:class]) && users[user_key][:role] == 'student'
       elsif params[:grade] 
-        users[user_key][:grade] == params[:grade]
+        users[user_key][:grade] == params[:grade] && users[user_key][:role] == 'student'
       elsif params[:class]
-        users[user_key][:class].include?(params[:class])
+        users[user_key][:class].include?(params[:class]) && users[user_key][:role] == 'student'
       else
-        true
+        users[user_key][:role] == 'student'
       end
     end
 
