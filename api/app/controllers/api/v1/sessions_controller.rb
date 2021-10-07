@@ -12,6 +12,13 @@ class Api::V1::SessionsController < ApplicationController
 
       login!(@user[:userid])
 
+      set_data = Marshal.load(Marshal.dump(users[:save_data]))
+
+      set_data[@user[:userid]][:lastLoginDate] = DateTime.now
+
+      users.update(key: 'users', save_data: set_data)
+
+      @user = set_data[@user[:userid]]
       @user.delete(:crownNum)
       @user.delete(:password)
       
