@@ -13,6 +13,8 @@ class Api::V1::BooksController < ApplicationController
 
       crown_list = {}
 
+      q_id_list = {}
+
       book_keys.each do |book_key|
         crown = { gold: 0, silver: 0, bronze: 0 }
 
@@ -20,6 +22,7 @@ class Api::V1::BooksController < ApplicationController
 
         u_keys.each do |u_key|
           crown_list[u_key] = books_data[book_key][:units][u_key][:crown]
+          q_id_list[u_key] = books_data[book_key][:units][u_key][:latestQuestionID]
         end
       end
 
@@ -30,8 +33,14 @@ class Api::V1::BooksController < ApplicationController
           if dummy_book[:drillid] == book_key
             units = dummy_book[:units]
             units.each_with_index do |unit, unit_index|
+
               if crown_list[unit[:id]]
                 dummy_books[index][:units][unit_index][:crown] = crown_list[unit[:id]]
+              end
+
+              
+              if q_id_list[unit[:id]]
+                dummy_books[index][:units][unit_index][:latestQuestionID] = q_id_list[unit[:id]]
               end
             end
           end
@@ -42,23 +51,8 @@ class Api::V1::BooksController < ApplicationController
 
       render status: 200, json: output
     else
-      output = [
-        { 
-          "drillid": "",
-          "grade": "",
-          "school": "",
-          "subject": "",
-          "title": "",
-          "img": "",
-          "units":[
-            {
-              "id": "",
-              "title": "",
-              "crown": ""
-            }
-          ]
-        }
-      ]
+
+      output = call_books
 
       render status: 200, json: output
     end
