@@ -240,56 +240,6 @@ testpass = Digest::MD5.hexdigest("testpass")
                       gold: 0,
                       silver: 0, 
                       bronze: 0 
-                    },
-                    "dp220t": {
-                    userid: "dp220t",
-                    name: "管理者300",
-                    school: "小学校",
-                    grade: "2",
-                    schoolid: "",
-                    class: ["2", "英語S"],
-                    lastLoginDate: "2021-09-09",
-                    img: "/img/profileicon/img14.jpg", 
-                    role: "teacher",
-                    password: testpass,
-                    crownNum:{ 
-                      gold: 0,
-                      silver: 0, 
-                      bronze: 0 
-                    },
-                    "dp311": {
-                      userid: "dp311",
-                      name: "学習者311",
-                      school: "小学校",
-                      grade: "3",
-                      schoolid: "",
-                      class: ["3", "英語S"],
-                      lastLoginDate: "2021-09-09",
-                      img: "/img/profileicon/img14.jpg", 
-                      role: "student",
-                      password: testpass,
-                      crownNum:{ 
-                        gold: 0,
-                        silver: 0, 
-                        bronze: 0 
-                      }
-                    },
-                    "dp411": {
-                      userid: "dp411",
-                      name: "学習者411",
-                      school: "小学校",
-                      grade: "4",
-                      schoolid: "",
-                      class: ["4", "英語S"],
-                      lastLoginDate: "2021-09-09",
-                      img: "/img/profileicon/img14.jpg", 
-                      role: "student",
-                      password: testpass,
-                      crownNum:{ 
-                        gold: 0,
-                        silver: 0, 
-                        bronze: 0 
-                      }
                     }
                   }
                 }
