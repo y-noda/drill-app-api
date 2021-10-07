@@ -275,6 +275,40 @@ testpass = Digest::MD5.hexdigest("testpass")
                       silver: 0, 
                       bronze: 0 
                     }
+                  },
+                  "dp511": {
+                    userid: "dp511",
+                    name: "学習者511",
+                    school: "小学校",
+                    grade: "5",
+                    schoolid: "",
+                    class: ["5", "英語S"],
+                    lastLoginDate: "2021-09-09",
+                    img: "/img/profileicon/img14.jpg", 
+                    role: "student",
+                    password: testpass,
+                    crownNum:{ 
+                      gold: 0,
+                      silver: 0, 
+                      bronze: 0 
+                    }
+                  },
+                  "dp611": {
+                    userid: "dp611",
+                    name: "学習者611",
+                    school: "小学校",
+                    grade: "6",
+                    schoolid: "",
+                    class: ["6", "英語S"],
+                    lastLoginDate: "2021-09-09",
+                    img: "/img/profileicon/img14.jpg", 
+                    role: "student",
+                    password: testpass,
+                    crownNum:{ 
+                      gold: 0,
+                      silver: 0, 
+                      bronze: 0 
+                    }
                   }
                 }
               )
