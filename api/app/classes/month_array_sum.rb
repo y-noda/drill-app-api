@@ -18,14 +18,13 @@ class MonthArraySum
   end
 
   def array_sum
-    if start_date != end_date && start_date < end_date
-      
+    start_month_gap = (updated_time.year - start_date.year) * 12 + (updated_time.month - start_date.month)
+    end_month_gap = (updated_time.year - end_date.to_date.year) * 12 + (updated_time.month - end_date.to_date.month)
+    #何列目の配列？
+    startPosition = 11 - start_month_gap 
+    endPosition = 11 - end_month_gap
 
-      start_month_gap = (updated_time.year - start_date.year) * 12 + (updated_time.month - start_date.month)
-      end_month_gap = (updated_time.year - end_date.to_date.year) * 12 + (updated_time.month - end_date.to_date.month)
-      #何列目の配列？
-      startPosition = 11 - start_month_gap 
-      endPosition = 11 - end_month_gap
+    if start_date != end_date && start_date < end_date
       
       if endPosition - startPosition == 0
         month_array[startPosition].each_with_index do |el, index|
@@ -58,6 +57,10 @@ class MonthArraySum
         end
 
       end
+    elsif start_date == end_date
+
+      self.summary += month_array[startPosition][start_date.day - 1]
+
     else
       month_array.each do |array|
         self.summary += array.sum
