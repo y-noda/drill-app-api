@@ -88,7 +88,7 @@ class Api::V1::UsersController < ApplicationController
 
             date = user_answer[i][:updated_date].to_date
 
-            if params[:startDate].to_date < date && params[:endDate].to_date >= date
+            if params[:startDate].to_date <= date && params[:endDate].to_date >= date
               study_count_sum += 1
             end
 
@@ -227,7 +227,7 @@ class Api::V1::UsersController < ApplicationController
             len = value[:units][u_key][:answers].length
             date = value[:units][u_key][:answers][len - 1][:dateStart]
 
-            if params[:startDate].to_date < date.to_date && params[:endDate].to_date >= date.to_date
+            if params[:startDate].to_date <= date.to_date && params[:endDate].to_date >= date.to_date
               answeredUnitNum += 1
             end
           else
