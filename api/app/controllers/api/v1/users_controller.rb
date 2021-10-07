@@ -190,7 +190,7 @@ class Api::V1::UsersController < ApplicationController
 
            #studyCountNum
 
-           if params[:startDate].to_date < updated_date.to_date && params[:endDate].to_date >= updated_date.to_date
+           if params[:startDate].to_date <= updated_date.to_date && params[:endDate].to_date >= updated_date.to_date
             study_count_Num += 1
            end
 
