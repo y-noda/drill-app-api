@@ -74,7 +74,7 @@ testpass = Digest::MD5.hexdigest("testpass")
                   },
                   "dp110t": {
                     userid: "dp110t",
-                    name: "管理者100",
+                    name: "先生100",
                     school: "小学校",
                     grade: "1",
                     schoolid: "",
@@ -142,7 +142,7 @@ testpass = Digest::MD5.hexdigest("testpass")
                   },
                   "dp210t": {
                     userid: "dp210t",
-                    name: "管理者200",
+                    name: "先生200",
                     school: "小学校",
                     grade: "2",
                     schoolid: "",
@@ -227,7 +227,7 @@ testpass = Digest::MD5.hexdigest("testpass")
                   },
                   "dp220t": {
                     userid: "dp220t",
-                    name: "管理者300",
+                    name: "先生300",
                     school: "小学校",
                     grade: "2",
                     schoolid: "",
