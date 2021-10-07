@@ -22,6 +22,7 @@ class SaveAnswer
     set_data[drill_id][:units][unit_id][:answers] = [] 
     set_data[drill_id][:units][unit_id][:crown] = '' 
     set_data[drill_id][:units][unit_id][:unitTitle] = ''
+    set_data[drill_id][:units][unit_id][:latestQuestionID] = ''
 
     sum_array = [:studyingTime, :answeredQuestionNum, :correctAnswerNum]
 
@@ -127,6 +128,11 @@ class SaveAnswer
       end
 
       set_data[drill_id][:units][unit_id][:unitTitle] = parameters[:unitTitle]
+      #最後のquestion_id
+      last_question_num = parameters[:question].length
+      question_id = parameters[:question][last_question_num - 1][:id]
+      set_data[drill_id][:units][unit_id][:latestQuestionID] = question_id
+
       
       #最終更新年、月が違う場合は処理がいる
       fill_gap
