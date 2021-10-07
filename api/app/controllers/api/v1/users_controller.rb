@@ -136,7 +136,7 @@ class Api::V1::UsersController < ApplicationController
     
     drills = Answer.find_by(key: params[:id])
 
-    if drills
+    if user && drills
       
       #同期
       set_data = Marshal.load(Marshal.dump(drills[:save_data]))
@@ -283,12 +283,21 @@ class Api::V1::UsersController < ApplicationController
         return_data[:user][:crownNum] = crown
 
       end
-    end
 
-    if user && drills
       render status: 200, json: return_data
+
     else
-      render status: 400, json: { save_data: '失敗' }
+
+      return_data = {
+        studyingTime: 0, 
+        studyCountNum: 0, 
+        answeredQuestionNum: 0, 
+        correctAnswerNum: 0,
+        userNum: 0
+      }
+
+      render status: 200, json: return_data
+
     end
 
   end
