@@ -21,14 +21,19 @@ docker stop <コンテナのid> ...
 
 ① mongoDBのコンテナに入る
 docker-compose exec mongo bash
+
 ② mongodbにログイン
 mongo
+
 ③ DB表示 
 show dbs;
+
 ④ DB選択
 use api-development;
+
 ⑤ コレクション表示
 show collections;
+
 ⑥ コレクション削除
 db.<コレクション名>.drop()
 
