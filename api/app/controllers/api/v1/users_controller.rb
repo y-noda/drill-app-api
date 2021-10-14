@@ -171,9 +171,13 @@ class Api::V1::UsersController < ApplicationController
         study_count_Num = 0
 
         daily_study_array = value[:studyingTime][:dailyArr]
+        daily_st_count_array = value[:studyCountNum][:dailyArr]
+
+        daily_answer_unit_array = value[:answeredUnitNum][:dailyArr]
+
         daily_answer_array = value[:answeredQuestionNum][:dailyArr]
         daily_correct_array = value[:correctAnswerNum][:dailyArr]
-        daily_st_count_array = value[:studyCountNum][:dailyArr]
+        
         updated_date = value[:updated_date]
 
 
@@ -182,22 +186,28 @@ class Api::V1::UsersController < ApplicationController
           month_sum = MonthArraySum.new(daily_study_array, params[:startDate], params[:endDate], updated_date)
           studyingTime += month_sum.array_sum
 
+          #studyCountNum
+          month_sum = MonthArraySum.new(daily_st_count_array, params[:startDate], params[:endDate], updated_date)
+          studyCountNum += month_sum.array_sum
+
+          #answeredUnitNum
+          month_sum = MonthArraySum.new(daily_answer_unit_array, params[:startDate], params[:endDate], updated_date)
+          answeredUnitNum += month_sum.array_sum
+
           month_sum = MonthArraySum.new(daily_answer_array, params[:startDate], params[:endDate], updated_date)
           answeredQuestionNum += month_sum.array_sum
 
           month_sum = MonthArraySum.new(daily_correct_array, params[:startDate], params[:endDate], updated_date)
           correctAnswerNum += month_sum.array_sum
 
-          #studyCountNum
-          month_sum = MonthArraySum.new(daily_st_count_array, params[:startDate], params[:endDate], updated_date)
-          studyCountNum += month_sum.array_sum
-          
         else 
           
           studyingTime = value[:studyingTime][:total]
+          study_count_Num = value[:studyCountNum][:total]
+          answeredUnitNum = value[:answeredUnitNum][:total]
           answeredQuestionNum = value[:answeredQuestionNum][:total]
           correctAnswerNum = value[:correctAnswerNum][:total]
-          study_count_Num += value[:studyCountNum][:total]
+          
         end
 
 
@@ -219,17 +229,6 @@ class Api::V1::UsersController < ApplicationController
                 end
               end
             end
-          end
-
-          if params[:startDate] && params[:endDate]
-            len = value[:units][u_key][:answers].length
-            date = value[:units][u_key][:answers][len - 1][:dateStart]
-
-            if params[:startDate].to_date <= date.to_date && params[:endDate].to_date >= date.to_date
-              answeredUnitNum += 1
-            end
-          else
-            answeredUnitNum = u_keys.length
           end
 
           if value[:units][u_key][:crown] == 'gold'
