@@ -43,7 +43,6 @@ class Api::V1::UsersController < ApplicationController
       @answer = Answer.find_by(key: user_key)
 
       if @answer
-
         #同期
         set_data = Marshal.load(Marshal.dump(@answer[:save_data]))
 
@@ -71,7 +70,6 @@ class Api::V1::UsersController < ApplicationController
           daily_answer_array = user_answer[i][:answeredQuestionNum][:dailyArr]
           daily_correct_array = user_answer[i][:correctAnswerNum][:dailyArr]
           daily_st_count_array = user_answer[i][:studyCountNum][:dailyArr]
-
 
           updated_date = user_answer[i][:updated_date]
 
@@ -105,7 +103,6 @@ class Api::V1::UsersController < ApplicationController
             daily_st_count_array.each do |array|
               study_count_sum += array.sum
             end
-
           end
 
         end
@@ -210,7 +207,6 @@ class Api::V1::UsersController < ApplicationController
           
         end
 
-
         units = []
         u_keys = value[:units].keys
 
@@ -223,10 +219,8 @@ class Api::V1::UsersController < ApplicationController
           value[:units][u_key][:answers].each do |answer|
             answeredQSum += answer[:answeredQuestionNum]
             answer[:question].each do |question|
-              question[:trial].each do |trial|
-                if trial[:correct] == true
-                  correctANum += 1
-                end
+              if question[:trial][0][:correct] == true
+                correctANum += 1
               end
             end
           end
