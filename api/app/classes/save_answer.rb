@@ -24,7 +24,7 @@ class SaveAnswer
     set_data[drill_id][:units][unit_id][:unitTitle] = ''
     set_data[drill_id][:units][unit_id][:latestQuestionID] = ''
 
-    sum_array = [:studyingTime, :answeredQuestionNum, :correctAnswerNum]
+    sum_array = [:studyingTime, :answeredQuestionNum, :correctAnswerNum, :studyCountNum]
 
     sum_array.each do |name|
       set_data[drill_id][name] = {}
@@ -72,7 +72,7 @@ class SaveAnswer
         #同じ年度12ヶ月以内gap月分埋める
         gap.times do |i|
 
-          sum_array = [:studyingTime, :answeredQuestionNum, :correctAnswerNum]
+          sum_array = [:studyingTime, :answeredQuestionNum, :correctAnswerNum, :studyCountNum]
 
           sum_array.each do |name|
             set_data[drill_id][name][:dailyArr].push(Array.new(31, 0))
@@ -136,6 +136,13 @@ class SaveAnswer
       
       #最終更新年、月が違う場合は処理がいる
       fill_gap
+
+      #studyCountNum
+      
+      if set_data[drill_id][:studyingTime][:dailyArr][11][sent_date.to_date.day - 1] == 0
+        set_data[drill_id][:studyCountNum][:total] += 1
+        set_data[drill_id][:studyCountNum][:dailyArr][11][sent_date.to_date.day - 1] = 1
+      end
       
       set_data[drill_id][:studyingTime][:dailyArr][11][sent_date.to_date.day - 1] += parameters[:elapsedTime]
       set_data[drill_id][:answeredQuestionNum][:dailyArr][11][sent_date.to_date.day - 1] += parameters[:answeredQuestionNum]
