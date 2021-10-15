@@ -25,6 +25,7 @@ class Api::V1::MypagesController < ApplicationController
 
         daily_studying_time = ConvertMonthSpan.new(set_data[book_id][:studyingTime][:dailyArr], set_data[book_id][:updated_date])
         daily_answered_question = ConvertMonthSpan.new(set_data[book_id][:answeredQuestionNum][:dailyArr], set_data[book_id][:updated_date])
+        daily_st_count_answer = ConvertMonthSpan.new(set_data[book_id][:studyCountNum][:dailyArr], set_data[book_id][:updated_date])
         daily_correct_answer = ConvertMonthSpan.new(set_data[book_id][:correctAnswerNum][:dailyArr], set_data[book_id][:updated_date])
         
         grade = set_data[book_id][:grade]
@@ -38,6 +39,11 @@ class Api::V1::MypagesController < ApplicationController
         answeredQuestionNum = {
           total: set_data[book_id][:answeredQuestionNum][:total],
           dailyArr: daily_answered_question.convert_span
+        }
+
+        studyCountNum = {
+          total: set_data[book_id][:studyCountNum][:total],
+          dailyArr: daily_st_count_answer.convert_span
         }
         
         correctAnswerNum = {
@@ -74,6 +80,7 @@ class Api::V1::MypagesController < ApplicationController
             },
             studyingTime: studyingTime, 
             answeredQuestionNum: answeredQuestionNum,
+            studyCountNum: studyCountNum,
             correctAnswerNum: correctAnswerNum
           }
         )
@@ -111,6 +118,23 @@ class Api::V1::MypagesController < ApplicationController
             ]
           },
           answeredQuestionNum: {
+            total: 0,
+            dailyArr: [
+              [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+              [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+              [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+              [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+              [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+              [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+              [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+              [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+              [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+              [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+              [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+              [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+            ]
+          },
+          studyCountNum: {
             total: 0,
             dailyArr: [
               [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],

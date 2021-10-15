@@ -43,7 +43,6 @@ class Api::V1::UsersController < ApplicationController
       @answer = Answer.find_by(key: user_key)
 
       if @answer
-
         #同期
         set_data = Marshal.load(Marshal.dump(@answer[:save_data]))
 
@@ -70,6 +69,7 @@ class Api::V1::UsersController < ApplicationController
           daily_study_array = user_answer[i][:studyingTime][:dailyArr]
           daily_answer_array = user_answer[i][:answeredQuestionNum][:dailyArr]
           daily_correct_array = user_answer[i][:correctAnswerNum][:dailyArr]
+          daily_st_count_array = user_answer[i][:studyCountNum][:dailyArr]
 
           updated_date = user_answer[i][:updated_date]
 
@@ -83,14 +83,9 @@ class Api::V1::UsersController < ApplicationController
             month_sum = MonthArraySum.new(daily_correct_array, params[:startDate], params[:endDate], updated_date)
             correct_answer_sum += month_sum.array_sum
 
-
             #studyCountNum
-
-            date = user_answer[i][:updated_date].to_date
-
-            if params[:startDate].to_date <= date && params[:endDate].to_date >= date
-              study_count_sum += 1
-            end
+            month_sum = MonthArraySum.new(daily_st_count_array, params[:startDate], params[:endDate], updated_date)
+            study_count_sum += month_sum.array_sum
 
           else
             daily_study_array.each do |array|
@@ -104,14 +99,15 @@ class Api::V1::UsersController < ApplicationController
             daily_correct_array.each do |array|
               correct_answer_sum += array.sum
             end
-            study_count_sum += 1
 
+            daily_st_count_array.each do |array|
+              study_count_sum += array.sum
+            end
           end
 
         end
       end
     end
-    
 
     return_data = {
       "studyingTime": daily_study_sum, 
@@ -172,8 +168,13 @@ class Api::V1::UsersController < ApplicationController
         study_count_Num = 0
 
         daily_study_array = value[:studyingTime][:dailyArr]
+        daily_st_count_array = value[:studyCountNum][:dailyArr]
+
+        daily_answer_unit_array = value[:answeredUnitNum][:dailyArr]
+
         daily_answer_array = value[:answeredQuestionNum][:dailyArr]
         daily_correct_array = value[:correctAnswerNum][:dailyArr]
+        
         updated_date = value[:updated_date]
 
 
@@ -182,26 +183,29 @@ class Api::V1::UsersController < ApplicationController
           month_sum = MonthArraySum.new(daily_study_array, params[:startDate], params[:endDate], updated_date)
           studyingTime += month_sum.array_sum
 
+          #studyCountNum
+          month_sum = MonthArraySum.new(daily_st_count_array, params[:startDate], params[:endDate], updated_date)
+          studyCountNum += month_sum.array_sum
+
+          #answeredUnitNum
+          month_sum = MonthArraySum.new(daily_answer_unit_array, params[:startDate], params[:endDate], updated_date)
+          answeredUnitNum += month_sum.array_sum
+
           month_sum = MonthArraySum.new(daily_answer_array, params[:startDate], params[:endDate], updated_date)
           answeredQuestionNum += month_sum.array_sum
 
           month_sum = MonthArraySum.new(daily_correct_array, params[:startDate], params[:endDate], updated_date)
           correctAnswerNum += month_sum.array_sum
 
-           #studyCountNum
-
-           if params[:startDate].to_date <= updated_date.to_date && params[:endDate].to_date >= updated_date.to_date
-            study_count_Num += 1
-           end
-
         else 
           
           studyingTime = value[:studyingTime][:total]
+          study_count_Num = value[:studyCountNum][:total]
+          answeredUnitNum = value[:answeredUnitNum][:total]
           answeredQuestionNum = value[:answeredQuestionNum][:total]
           correctAnswerNum = value[:correctAnswerNum][:total]
-          study_count_Num += 1
+          
         end
-
 
         units = []
         u_keys = value[:units].keys
@@ -215,23 +219,10 @@ class Api::V1::UsersController < ApplicationController
           value[:units][u_key][:answers].each do |answer|
             answeredQSum += answer[:answeredQuestionNum]
             answer[:question].each do |question|
-              question[:trial].each do |trial|
-                if trial[:correct] == true
-                  correctANum += 1
-                end
+              if question[:trial][0][:correct] == true
+                correctANum += 1
               end
             end
-          end
-
-          if params[:startDate] && params[:endDate]
-            len = value[:units][u_key][:answers].length
-            date = value[:units][u_key][:answers][len - 1][:dateStart]
-
-            if params[:startDate].to_date <= date.to_date && params[:endDate].to_date >= date.to_date
-              answeredUnitNum += 1
-            end
-          else
-            answeredUnitNum = u_keys.length
           end
 
           if value[:units][u_key][:crown] == 'gold'
@@ -255,8 +246,6 @@ class Api::V1::UsersController < ApplicationController
         studay_time_calc = ConvertMonthSpan.new(value[:studyingTime][:dailyArr], value[:updated_date])
 
         studyingTimeArr = studay_time_calc.convert_span
-
-        
 
         return_data[:drills].push(
           {
