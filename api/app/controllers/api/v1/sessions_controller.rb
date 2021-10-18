@@ -14,7 +14,7 @@ class Api::V1::SessionsController < ApplicationController
 
       set_data = Marshal.load(Marshal.dump(users[:save_data]))
 
-      set_data[@user[:userid]][:lastLoginDate] = DateTime.now
+      set_data[@user[:userid]][:lastLoginDate] = DateTime.now.strftime("%Y-%m-%d")
 
       users.update(key: 'users', save_data: set_data)
 
