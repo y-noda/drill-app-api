@@ -225,14 +225,16 @@ class Api::V1::UsersController < ApplicationController
             end
           end
 
-          if value[:units][u_key][:crown] == 'gold'
-            crown[:gold] += 1
-          elsif value[:units][u_key][:crown] == 'silver'
-            crown[:silver] += 1
-          elsif value[:units][u_key][:crown] == 'bronze'
-            crown[:bronze] += 1
+          value[:units][u_key][:answers].each do |answer|
+            if answer[:crown] == 'gold'
+              crown[:gold] += 1
+            elsif answer[:crown] == 'silver'
+              crown[:silver] += 1
+            elsif answer[:crown] == 'bronze'
+              crown[:bronze] += 1
+            end
           end
-
+   
           units.push(
             {
               "id": u_key,
