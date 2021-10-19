@@ -58,12 +58,14 @@ class Api::V1::MypagesController < ApplicationController
         units = set_data[book_id][:units]
 
         units.keys.each do |key|
-          if units[key][:crown] == 'gold'
-            gold += 1
-          elsif units[key][:crown] == 'silver'
-            silver += 1
-          elsif units[key][:crown] == 'bronze'
-            bronze += 1
+          units[key][:answers].each do |answer|
+            if answer[:crown] == 'gold'
+              gold += 1
+            elsif answer[:crown] == 'silver'
+              silver += 1
+            elsif answer[:crown] == 'bronze'
+              bronze += 1
+            end
           end
         end
 
@@ -170,9 +172,6 @@ class Api::V1::MypagesController < ApplicationController
           }
         }
       ]
-
-
-
 
       render status: 200, json: return_data
     end
