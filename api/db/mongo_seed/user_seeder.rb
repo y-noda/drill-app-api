@@ -309,6 +309,57 @@ testpass = Digest::MD5.hexdigest("testpass")
                       silver: 0, 
                       bronze: 0 
                     }
+                  },
+                  "dp400t": {
+                    userid: "dp400t",
+                    name: "先生400",
+                    school: "小学校",
+                    grade: "4",
+                    schoolid: "",
+                    class: ["4", "英語S"],
+                    lastLoginDate: "2021-09-09",
+                    img: "/img/profileicon/img14.jpg", 
+                    role: "teacher",
+                    password: testpass,
+                    crownNum:{ 
+                      gold: 0,
+                      silver: 0, 
+                      bronze: 0 
+                    }
+                  },
+                  "dp500t": {
+                    userid: "dp500t",
+                    name: "先生500",
+                    school: "小学校",
+                    grade: "5",
+                    schoolid: "",
+                    class: ["5", "英語S"],
+                    lastLoginDate: "2021-09-09",
+                    img: "/img/profileicon/img14.jpg", 
+                    role: "teacher",
+                    password: testpass,
+                    crownNum:{ 
+                      gold: 0,
+                      silver: 0, 
+                      bronze: 0 
+                    }
+                  },
+                  "dp600t": {
+                    userid: "dp600t",
+                    name: "先生600",
+                    school: "小学校",
+                    grade: "6",
+                    schoolid: "",
+                    class: ["6", "英語S"],
+                    lastLoginDate: "2021-09-09",
+                    img: "/img/profileicon/img14.jpg", 
+                    role: "teacher",
+                    password: testpass,
+                    crownNum:{ 
+                      gold: 0,
+                      silver: 0, 
+                      bronze: 0 
+                    }
                   }
                 }
               )
