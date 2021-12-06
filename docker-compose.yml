@@ -18,6 +18,7 @@ services:
       - mongo
     stdin_open: true
     tty: true
+    restart: always
 
   mongo:
     image: mongo:latest
@@ -28,6 +29,7 @@ services:
         - "27017:27017"
     volumes:
         - "mongo-data:/data/db"
+    restart: always
 
   mongo-express:
     container_name: mongo-express
@@ -51,5 +53,6 @@ services:
       - "1080:80"
     volumes:
       - ./api/:/api
+    restart: always
 
 
