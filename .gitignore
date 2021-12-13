@@ -28,6 +28,9 @@
 /api/public/sound
 /api/public/index.html
 /api/public/test.html
+/api/public/json/
+/api/public/test/
+get-docker.sh
 
 /api.byebug_history
 
