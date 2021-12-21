@@ -49,7 +49,14 @@ services:
       - api
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - ./api/:/api
+      - /etc/letsencrypt:/etc/letsencrypt
 
-
+  certbot:
+    image: certbot/certbot:v1.7.0
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt
+      - /var/www/drill-app-api/api/public:/var/www/drill-app-api/api/public
+    command: ["--version"]
