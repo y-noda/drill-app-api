@@ -8,6 +8,8 @@ services:
     build:
       context: ./api/
       dockerfile: Dockerfile
+      args:
+        MONGO_URI: $MONGO_URI
     ports:
       - "3000:3000"
     volumes:
@@ -24,7 +26,6 @@ services:
     environment:
       -  'MONGODB_USER=root'
       -  'MONGODB_PASS=password'
-      -  "MONGODB_URI=${MONGO_URI}"
     ports:
         - "27017:27017"
     volumes:
