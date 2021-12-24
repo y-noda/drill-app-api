@@ -55,7 +55,7 @@ services:
     volumes:
       - ./api/:/api
       - /etc/letsencrypt:/etc/letsencrypt
-    command: /bin/sh -c "envsubst '$$NGINX_SERVER_NAME'< /etc/nginx/conf.d/api.conf.template > /etc/nginx/conf.d/defapapiiault.conf && nginx -g 'daemon off;'"
+    command: /bin/sh -c "envsubst '$$NGINX_SERVER_NAME'< /etc/nginx/conf.d/api.conf.template > /etc/nginx/conf.d/api.conf && nginx -g 'daemon off;'"
     environment:
       NGINX_SERVER_NAME: $NGINX_SERVER_NAME
 
