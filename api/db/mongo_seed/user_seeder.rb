@@ -360,6 +360,108 @@ testpass = Digest::MD5.hexdigest("testpass")
                       silver: 0, 
                       bronze: 0 
                     }
+                  },
+                  "jh100": {
+                    userid: "jh100",
+                    name: "中学生100",
+                    school: "中学校",
+                    grade: "1",
+                    schoolid: "",
+                    class: ["1", "英語S"],
+                    lastLoginDate: "2021-09-09",
+                    img: "/img/profileicon/img14.jpg", 
+                    role: "jh-student",
+                    password: testpass,
+                    crownNum:{ 
+                      gold: 0,
+                      silver: 0, 
+                      bronze: 0 
+                    }
+                  },
+                  "jh100t": {
+                    userid: "jh100t",
+                    name: "中学校教員100",
+                    school: "中学校",
+                    grade: "1",
+                    schoolid: "",
+                    class: ["1", "英語S"],
+                    lastLoginDate: "2021-09-09",
+                    img: "/img/profileicon/img14.jpg", 
+                    role: "jh-teacher",
+                    password: testpass,
+                    crownNum:{ 
+                      gold: 0,
+                      silver: 0, 
+                      bronze: 0 
+                    }
+                  },
+                  "jh200": {
+                    userid: "jh200",
+                    name: "中学生200",
+                    school: "中学校",
+                    grade: "1",
+                    schoolid: "",
+                    class: ["1", "英語S"],
+                    lastLoginDate: "2021-09-09",
+                    img: "/img/profileicon/img14.jpg", 
+                    role: "jh-student",
+                    password: testpass,
+                    crownNum:{ 
+                      gold: 0,
+                      silver: 0, 
+                      bronze: 0 
+                    }
+                  },
+                  "jh200t": {
+                    userid: "jh200t",
+                    name: "中学校教員200",
+                    school: "中学校",
+                    grade: "2",
+                    schoolid: "",
+                    class: ["1", "英語S"],
+                    lastLoginDate: "2021-09-09",
+                    img: "/img/profileicon/img14.jpg", 
+                    role: "jh-teacher",
+                    password: testpass,
+                    crownNum:{ 
+                      gold: 0,
+                      silver: 0, 
+                      bronze: 0 
+                    }
+                  },
+                  "jh300": {
+                    userid: "jh300",
+                    name: "中学生300",
+                    school: "中学校",
+                    grade: "3",
+                    schoolid: "",
+                    class: ["1", "英語S"],
+                    lastLoginDate: "2021-09-09",
+                    img: "/img/profileicon/img14.jpg", 
+                    role: "jh-student",
+                    password: testpass,
+                    crownNum:{ 
+                      gold: 0,
+                      silver: 0, 
+                      bronze: 0 
+                    }
+                  },
+                  "jh300t": {
+                    userid: "jh300t",
+                    name: "中学校教員300",
+                    school: "中学校",
+                    grade: "3",
+                    schoolid: "",
+                    class: ["1", "英語S"],
+                    lastLoginDate: "2021-09-09",
+                    img: "/img/profileicon/img14.jpg", 
+                    role: "jh-teacher",
+                    password: testpass,
+                    crownNum:{ 
+                      gold: 0,
+                      silver: 0, 
+                      bronze: 0 
+                    }
                   }
                 }
               )
