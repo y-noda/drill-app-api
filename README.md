@@ -39,3 +39,7 @@ db.<コレクション名>.drop()
 
 ## mongoDBのGUI操作（ローカル開発環境)
 http://localhost:27017/
+
+## ユーザテストデータ作成
+rails r db/mongo_seed/user_seeder.rb
+
